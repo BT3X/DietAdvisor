@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">DietAdvisor</string>
+    <string name="app_name">Diet Advisor</string>
+    <string name="navbar_home">Home</string>
+    <string name="navbar_Tracking">Tracking</string>
+    <string name="navbar_Recommend">Recommend</string>
+    <string name="confirmation_Recognize_Food_Items">Recognize Food Items</string>
 </resources>
