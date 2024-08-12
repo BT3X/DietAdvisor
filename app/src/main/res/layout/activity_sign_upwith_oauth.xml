@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    tools:context=".SignUp">
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        app:layout_constraintWidth_percent="0.7"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="@font/lemon"
+            android:gravity="center_horizontal"
+            android:text="Personal Information"
+            android:textColor="@color/greenText"
+            android:textSize="40sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:padding="12dp"
+                android:textSize="15sp"
+                android:textColor="@color/greenText"
+                android:fontFamily="@font/itim"
+                android:text="Date of Birth"/>
+            <EditText
+                android:id="@+id/dob"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:padding="14dp"
+                android:background="@drawable/text_view_container"
+                android:hint="dd/mm/yyyy"
+                android:textColor="@color/greenText"
+                android:textColorHint="@color/grayTextInTextView"
+                android:textSize="15sp"
+                android:inputType="date"
+                android:fontFamily="@font/itim"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:padding="12dp"
+                android:textSize="15sp"
+                android:textColor="@color/greenText"
+                android:fontFamily="@font/itim"
+                android:text="Gender"/>
+
+            <AutoCompleteTextView
+                android:id="@+id/gender_dropdown"
+                android:layout_width="0dp"
+                android:layout_weight="3"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                android:hint="Choose Gender"
+                android:fontFamily="@font/itim"
+                android:textColorHint="@color/grayTextInTextView"
+                android:textSize="15sp"
+                android:textColor="@color/greenText"
+                android:padding="14dp"
+                android:background="@drawable/text_view_container"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:padding="12dp"
+                android:textSize="15sp"
+                android:textColor="@color/greenText"
+                android:fontFamily="@font/itim"
+                android:text="Height"/>
+            <EditText
+                android:id="@+id/height"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:padding="14dp"
+                android:background="@drawable/text_view_container"
+                android:hint="Height in cm"
+                android:textColor="@color/greenText"
+                android:textColorHint="@color/grayTextInTextView"
+                android:textSize="15sp"
+                android:fontFamily="@font/itim"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:padding="12dp"
+                android:textSize="15sp"
+                android:textColor="@color/greenText"
+                android:fontFamily="@font/itim"
+                android:text="Weight"/>
+            <EditText
+                android:id="@+id/weight"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:padding="14dp"
+                android:background="@drawable/text_view_container"
+                android:hint="Weight in kg"
+                android:textColor="@color/greenText"
+                android:textColorHint="@color/grayTextInTextView"
+                android:textSize="15sp"
+                android:fontFamily="@font/itim"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:padding="12dp"
+                android:textSize="15sp"
+                android:textColor="@color/greenText"
+                android:fontFamily="@font/itim"
+                android:text="Dietary Goal"/>
+
+            <AutoCompleteTextView
+                android:id="@+id/diet_goal_dropdown"
+                android:layout_width="0dp"
+                android:layout_weight="3"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                android:hint="Dietary Goal"
+                android:fontFamily="@font/itim"
+                android:textColorHint="@color/grayTextInTextView"
+                android:textSize="15sp"
+                android:textColor="@color/greenText"
+                android:padding="14dp"
+                android:background="@drawable/text_view_container"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:padding="12dp"
+                android:textSize="15sp"
+                android:textColor="@color/greenText"
+                android:fontFamily="@font/itim"
+                android:text="Language"/>
+
+            <AutoCompleteTextView
+                android:id="@+id/language_dropdown"
+                android:layout_width="0dp"
+                android:layout_weight="3"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                android:hint="Language"
+                android:fontFamily="@font/itim"
+                android:textColorHint="@color/grayTextInTextView"
+                android:textSize="15sp"
+                android:textColor="@color/greenText"
+                android:padding="14dp"
+                android:background="@drawable/text_view_container"/>
+        </LinearLayout>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Save"
+            android:background="@drawable/button"
+            android:textColor="@color/grayText"
+            android:fontFamily="@font/itim"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:textAllCaps="false"
+            />
+
+
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

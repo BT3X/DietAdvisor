@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="background">#C8D3C4</color>
+    <color name="greenText">#365034</color>
+    <color name="grayText">#F5F5F5</color>
+    <color name="greenButton">#949D81</color>
+    <color name="greenButtonStroke">#6F8D6D</color>
+    <color name="grayTextInTextView">#4D000000</color>
+
+</resources>

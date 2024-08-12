@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Diet Advisor</string>
+    <string name="welcome_text">Welcome to</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="signin_text">Sign In</string>
+    <string name="signin_google">Sign In with Google</string>
+    <string name="signin_line">Sign In with Line</string>
+    <string name="or">or</string>
+    <string name="signup_prompt">Not a member? Sign up now!</string>
+    <string-array name="Gender">
+        <item>Male</item>
+        <item>Female</item>
+        <item>Non-binary</item>
+    </string-array>
+    <string-array name="DietGoal">
+        <item>Lose weight</item>
+        <item>Stay the same</item>
+        <item>Gain weight</item>
+    </string-array>
+    <string-array name="Language">
+        <item>Chinese</item>
+        <item>English</item>
+    </string-array>
+</resources>
