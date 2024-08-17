@@ -1,6 +1,8 @@
 package com.example.dietadvisor
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.FrameLayout
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -15,6 +17,10 @@ class HomePage : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+        val trackingButton = findViewById<FrameLayout>(R.id.tracking_button)
+        trackingButton.setOnClickListener {
+            startActivity(Intent(this, Tracking::class.java))
         }
     }
 }

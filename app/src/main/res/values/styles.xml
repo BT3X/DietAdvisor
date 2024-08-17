@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Base application theme -->
-    <style name="CustomAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="CustomAppTheme" parent="Theme.MaterialComponents.Light.Bridge">
         <!-- Customize your theme here -->
         <item name="colorPrimary">@color/background</item>
         <item name="colorPrimaryDark">@color/greenText</item>
         <item name="colorAccent">@color/grayText</item>
         <!-- You can customize other theme attributes here -->
+        <item name="materialCalendarStyle">@style/Widget.MaterialComponents.MaterialCalendar</item>
+        <item name="materialCalendarFullscreenTheme">@style/ThemeOverlay.MaterialComponents.MaterialCalendar.Fullscreen</item>
+        <item name="materialCalendarTheme">@style/ThemeOverlay.MaterialComponents.MaterialCalendar</item>
     </style>
 </resources>
