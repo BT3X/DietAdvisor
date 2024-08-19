@@ -8,6 +8,7 @@ import androidx.core.view.WindowInsetsCompat
 
 class SignUpwithOAuth : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        getSupportActionBar()?.hide()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_sign_upwith_oauth)

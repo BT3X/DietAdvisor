@@ -21,6 +21,7 @@ import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 class Tracking : AppCompatActivity() {
+
     lateinit var btnDatePicker: Button
     lateinit var barChart: BarChart
     lateinit var barData: BarData
@@ -28,6 +29,7 @@ class Tracking : AppCompatActivity() {
     lateinit var barEntriesList: ArrayList<BarEntry>
     @SuppressLint("SimpleDateFormat")
     override fun onCreate(savedInstanceState: Bundle?) {
+        getSupportActionBar()?.hide()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_tracking)

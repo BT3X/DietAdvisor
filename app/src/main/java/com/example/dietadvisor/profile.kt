@@ -8,6 +8,7 @@ import androidx.core.view.WindowInsetsCompat
 
 class profile : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        getSupportActionBar()?.hide()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_profile)

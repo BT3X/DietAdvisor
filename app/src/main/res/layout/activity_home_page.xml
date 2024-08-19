@@ -11,25 +11,27 @@
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.15"
         app:layout_constraintTop_toTopOf="parent"
         android:orientation="horizontal">
         <ImageView
             android:id="@+id/imageView2"
-            android:padding="10dp"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:paddingLeft="10dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             app:srcCompat="@drawable/logo"
             tools:layout_editor_absoluteX="16dp"
             tools:layout_editor_absoluteY="16dp" />
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="2.5"
+            android:padding="10dp"
             android:gravity="center"
             android:text="Hello, Trang!"
-            android:textSize="25sp"
-            android:fontFamily="@font/itim"
-            android:textColor="@color/greenText"/>
+            android:textSize="25sp" />
     </LinearLayout>
     <TextView
         android:id="@+id/question"
@@ -38,7 +40,6 @@
         app:layout_constraintTop_toBottomOf="@+id/header"
         android:text="What are you eating today?"
         android:fontFamily="@font/lemon"
-        android:textColor="@color/greenText"
         android:textSize="20sp"
         android:gravity="center"/>
 
@@ -47,10 +48,8 @@
         android:id="@+id/photo_instruction"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:fontFamily="@font/itim"
         android:gravity="center"
         android:text="The photo used should be in a 1:1 ratio, taken with a top-down view, include a 10 yuan coin and all the food items should be separated from each other."
-        android:textColor="@color/greenText"
         android:textSize="14sp"
         app:layout_constraintHeight_percent="0.1"
         app:layout_constraintTop_toBottomOf="@+id/question"
@@ -65,7 +64,7 @@
         android:gravity="center_horizontal"
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@+id/photo_instruction"
-        app:layout_constraintWidth_percent="0.7"
+        app:layout_constraintWidth_percent="0.8"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -94,9 +93,8 @@
                 android:layout_gravity="center"
                 android:textAlignment="center"
                 android:layout_marginEnd="15dp"
-                android:fontFamily="@font/itim"
                 android:textColor="@color/grayText"
-                android:textSize="15sp"
+                android:textSize="17sp"
                 />
         </LinearLayout>
 
@@ -124,9 +122,8 @@
                 android:layout_gravity="center"
                 android:textAlignment="center"
                 android:layout_marginEnd="15dp"
-                android:fontFamily="@font/itim"
                 android:textColor="@color/grayText"
-                android:textSize="15sp"
+                android:textSize="17sp"
                 />
         </LinearLayout>
 
@@ -141,14 +138,14 @@
         android:text="Today's Consumption"
         android:textSize="20sp"
         android:fontFamily="@font/lemon"
-        android:textColor="@color/greenText"
         android:textAlignment="center"
         android:paddingTop="30dp"
         android:paddingBottom="15dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.5"
         app:layout_constraintTop_toBottomOf="@+id/today_consumption"
         app:layout_constraintBottom_toTopOf="@id/navigation_bar"
         android:orientation="vertical">
@@ -156,17 +153,76 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:layout_marginBottom="15dp"
             android:orientation="horizontal">
-            <ir.mahozad.android.PieChart
-                android:padding="15dp"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                app:holeRatio="0.7"/>
-            <ir.mahozad.android.PieChart
-                android:padding="15dp"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                app:holeRatio="0.7"/>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Calories"
+                    android:textSize="20sp"
+                    android:layout_gravity="center_horizontal" />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    >
+                    <ir.mahozad.android.PieChart
+                        android:id="@+id/calorie_pc"
+                        android:padding="10dp"
+                        android:layout_gravity="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:holeRatio="0.7"/>
+                    <TextView
+                        android:id="@+id/calorie_info"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textAlignment="center"
+                        android:textSize="17sp"
+                        />
+                </FrameLayout>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Carbohydrate"
+                    android:textSize="20sp"
+                    android:layout_gravity="center_horizontal" />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    >
+                    <ir.mahozad.android.PieChart
+                        android:id="@+id/carb_pc"
+                        android:padding="10dp"
+                        android:layout_gravity="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:holeRatio="0.7"/>
+                    <TextView
+                        android:id="@+id/carb_info"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textAlignment="center"
+                        android:textSize="17sp"
+                        />
+                </FrameLayout>
+
+            </LinearLayout>
 
         </LinearLayout>
         <LinearLayout
@@ -174,16 +230,72 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:orientation="horizontal">
-            <ir.mahozad.android.PieChart
-                android:padding="15dp"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                app:holeRatio="0.7"/>
-            <ir.mahozad.android.PieChart
-                android:padding="15dp"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                app:holeRatio="0.7"/>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Protein"
+                    android:textSize="20sp"
+                    android:layout_gravity="center_horizontal" />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    >
+                    <ir.mahozad.android.PieChart
+                        android:id="@+id/protein_pc"
+                        android:padding="10dp"
+                        android:layout_gravity="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:holeRatio="0.7"/>
+                    <TextView
+                        android:id="@+id/protein_info"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textAlignment="center"
+                        android:textSize="17sp"
+                        />
+                </FrameLayout>
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Fat"
+                    android:textSize="20sp"
+                    android:layout_gravity="center_horizontal" />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    >
+                    <ir.mahozad.android.PieChart
+                        android:id="@+id/fat_pc"
+                        android:padding="10dp"
+                        android:layout_gravity="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:holeRatio="0.7"/>
+                    <TextView
+                        android:id="@+id/fat_info"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textAlignment="center"
+                        android:textSize="17sp"
+                        />
+                </FrameLayout>
+
+            </LinearLayout>
 
         </LinearLayout>
     </LinearLayout>
@@ -204,8 +316,9 @@
             android:layout_weight="1">
 
             <ImageView
-                android:layout_width="55dp"
-                android:layout_height="55dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
                 android:layout_gravity="center"
 
                 app:srcCompat="@drawable/home"
@@ -218,8 +331,9 @@
             android:layout_height="match_parent"
             android:layout_weight="1">
             <ImageView
-                android:layout_width="55dp"
-                android:layout_height="55dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
                 android:layout_gravity="center"
                 app:srcCompat="@drawable/tracking_icon"
                 tools:layout_editor_absoluteX="83dp"
@@ -231,8 +345,9 @@
             android:layout_height="match_parent"
             android:layout_weight="1">
             <ImageView
-                android:layout_width="55dp"
-                android:layout_height="55dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
                 android:layout_gravity="center"
                 app:srcCompat="@drawable/recommendations"
                 tools:layout_editor_absoluteX="154dp"
@@ -246,14 +361,14 @@
             android:layout_weight="1">
             <ImageView
                 android:id="@+id/imageView6"
-                android:layout_width="65dp"
-                android:layout_height="65dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
                 android:layout_gravity="center"
                 app:srcCompat="@drawable/user_icon"
                 tools:layout_editor_absoluteX="221dp"
                 tools:layout_editor_absoluteY="707dp" />
         </FrameLayout>
-
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

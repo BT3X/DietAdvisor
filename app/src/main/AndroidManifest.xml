@@ -12,39 +12,47 @@
         android:supportsRtl="true"
         tools:targetApi="31">
         <activity
-            android:name=".profile"
-            android:theme="@style/CustomAppTheme"
-            android:exported="false" />
+            android:name=".AnalysisResult"
+            android:exported="false"
+            android:theme="@style/CustomAppTheme"/>
         <activity
-            android:name=".recommendations"
-            android:theme="@style/CustomAppTheme"
-            android:exported="false" />
+            android:name=".RecognitionResult"
+            android:exported="false"
+            android:theme="@style/CustomAppTheme"/>
+        <activity
+            android:name=".profile"
+            android:exported="false"
+            android:theme="@style/CustomAppTheme" />
+        <activity
+            android:name=".Recommendations"
+            android:exported="false"
+            android:theme="@style/CustomAppTheme" />
         <activity
             android:name=".Tracking"
-            android:theme="@style/CustomAppTheme"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/CustomAppTheme" />
         <activity
             android:name=".HomePage"
-            android:theme="@style/CustomAppTheme"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/CustomAppTheme" />
         <activity
             android:name=".SignUpwithOAuth"
             android:exported="false"
-            android:theme="@style/CustomAppTheme"/>
+            android:theme="@style/CustomAppTheme" />
         <activity
             android:name=".SignUp"
             android:exported="false"
-            android:theme="@style/CustomAppTheme"/>
+            android:theme="@style/CustomAppTheme" />
         <activity
             android:name=".LoginActivity"
-            android:theme="@style/CustomAppTheme"
-            android:exported="true"> <!-- Set exported to true for the main entry point -->
+            android:exported="true"
+            android:theme="@style/CustomAppTheme"> <!-- Set exported to true for the main entry point -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
 
         <meta-data
             android:name="preloaded_fonts"

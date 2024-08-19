@@ -8,6 +8,27 @@
     <string name="signin_line">Sign In with Line</string>
     <string name="or">or</string>
     <string name="signup_prompt">Not a member? Sign up now!</string>
+    <string name="random_text">
+        Nestled deep within the verdant folds of towering mountains, the village of Eldertree was a place where time seemed to stand still. The villagers, a proud and resilient people, had lived in harmony with nature for generations, their lives dictated by the rhythms of the land and the seasons.\n\n
+
+        The village was named after the ancient tree that stood at its center, a colossal elder tree whose roots dug deep into the earth and whose branches spread wide, providing shelter to all who sought it. The tree was said to be as old as the mountains themselves, a living connection to the earth\'s ancient past. It was the heart of the village, and its presence was deeply revered by the villagers, who believed it to be a protector and a symbol of their enduring spirit.\n\n
+
+        Life in Eldertree was simple yet fulfilling. The villagers farmed the fertile soil, growing crops that flourished under the clear mountain air. The fields were a patchwork of golden wheat, emerald green vegetables, and fragrant herbs, all nourished by the crystal-clear streams that flowed down from the mountains. In the spring, the orchards blossomed with delicate flowers, filling the air with the sweet scent of apples and cherries that would be harvested in the fall.\n\n
+
+        The villagers were skilled artisans, their hands crafting everything from woven baskets to intricate wood carvings. They worked together, each person contributing their talents to the community, ensuring that no one was ever in need. The elders passed down their knowledge to the younger generations, teaching them the secrets of the land and the importance of living in harmony with it.\n\n
+
+        The village was a place of peace and contentment, but it was not without its challenges. The mountains, though beautiful, were also harsh and unforgiving. The winters were long and cold, with snowdrifts that could bury entire houses and winds that howled through the night like a pack of wolves. The villagers had learned to prepare for these harsh months, storing food and firewood, and reinforcing their homes against the bitter cold.\n\n
+
+        In the summer, the mountains brought other challenges. The streams that provided life-giving water could also become raging torrents, sweeping away anything in their path. The villagers worked tirelessly to maintain the dams and channels that controlled the flow of water, knowing that their lives depended on it. And always, there was the threat of landslides, when the rains came too heavy and the earth could no longer hold its grip on the steep slopes.\n\n
+
+        But through all these challenges, the villagers of Eldertree remained steadfast. They knew that their strength came from their unity, and they faced every hardship together. The village was more than just a collection of houses; it was a family, bound by ties of blood and friendship, and by the shared belief in the enduring power of the elder tree.\n\n
+
+        One of the most important traditions in Eldertree was the annual Harvest Festival, held in late autumn when the last of the crops had been gathered. The festival was a time of celebration, a chance to give thanks for the bounty of the land and to honor the spirits that watched over the village. The festival lasted for three days, with feasting, music, and dancing that brought the entire village together.\n\n
+
+        On the final night of the festival, the villagers gathered around the elder tree for a solemn ceremony. The village elder, a wise and ancient woman known as Grandmother Willow, would lead the ceremony, offering prayers to the spirits and asking for their continued protection. It was said that on this night, the veil between the worlds was at its thinnest, and that the spirits of the ancestors walked among the living, joining in the celebration.\n\n
+
+        As the years passed, the village of Eldertree continued to thrive, its people living in harmony with the land and with each other. The elder tree, their guardian and symbol of strength, stood as it had for centuries, its roots deep in the earth, its branches reaching for the sky. And as long as the tree stood, the villagers knew that they, too, would endure, no matter what challenges the mountains might bring.\n\n
+    </string>
     <string-array name="Gender">
         <item>Male</item>
         <item>Female</item>
@@ -22,4 +43,5 @@
         <item>Chinese</item>
         <item>English</item>
     </string-array>
+
 </resources>
