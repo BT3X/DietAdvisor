@@ -1,0 +1,88 @@
+{
+  "Username": "Trang",
+  "Date of Birth": "2003-09-14",
+  "Gender": "Female",
+  "Height": "154",
+  "Weight": "45",
+  "Dietary Goal": "Stay the same",
+  "Language": "English",
+  "Intake": [
+    {
+      "Date": "2024-08-01",
+      "Calorie": 1500,
+      "Protein": 70,
+      "Carb": 200,
+      "Fat": 50
+    },
+    {
+      "Date": "2024-08-02",
+      "Calorie": 1600,
+      "Protein": 75,
+      "Carb": 210,
+      "Fat": 55
+    },
+    {
+      "Date": "2024-08-03",
+      "Calorie": 1550,
+      "Protein": 72,
+      "Carb": 205,
+      "Fat": 52
+    },
+    {
+      "Date": "2024-08-04",
+      "Calorie": 1580,
+      "Protein": 74,
+      "Carb": 208,
+      "Fat": 54
+    },
+    {
+      "Date": "2024-08-05",
+      "Calorie": 1500,
+      "Protein": 70,
+      "Carb": 200,
+      "Fat": 50
+    },
+    {
+      "Date": "2024-08-06",
+      "Calorie": 1600,
+      "Protein": 75,
+      "Carb": 210,
+      "Fat": 55
+    },
+    {
+      "Date": "2024-08-07",
+      "Calorie": 1520,
+      "Protein": 71,
+      "Carb": 202,
+      "Fat": 51
+    },
+    {
+      "Date": "2024-08-08",
+      "Calorie": 1570,
+      "Protein": 73,
+      "Carb": 207,
+      "Fat": 53
+    },
+    {
+      "Date": "2024-08-09",
+      "Calorie": 1500,
+      "Protein": 70,
+      "Carb": 200,
+      "Fat": 50
+    },
+    {
+      "Date": "2024-08-10",
+      "Calorie": 1590,
+      "Protein": 74,
+      "Carb": 209,
+      "Fat": 54
+    },
+    {
+      "Date": "2024-08-19",
+      "Calorie": 1590,
+      "Protein": 90.7,
+      "Carb": 227.5,
+      "Fat": 40
+    }
+  ]
+}
