@@ -12,6 +12,7 @@ import android.text.style.UnderlineSpan
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -23,7 +24,7 @@ import com.google.android.material.expandable.ExpandableWidget
 
 class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        getSupportActionBar()?.hide()
+        supportActionBar?.hide()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_login)
@@ -33,26 +34,12 @@ class LoginActivity : AppCompatActivity() {
             insets
         }
 
-        // Initialize UI elements
-        val usernameEditText = findViewById<EditText>(R.id.username)
-        val passwordEditText = findViewById<EditText>(R.id.password)
-        val signInButton = findViewById<Button>(R.id.sign_in_button)
         val signUpTextView = findViewById<TextView>(R.id.sign_up_request)
-
-        signInButton.setOnClickListener{
-            val username = usernameEditText.text.toString()
-            val password = passwordEditText.text.toString()
-            login (username, password)
-        }
         signUpRequest(signUpTextView)
-    }
 
-    private fun login (username: String, password:String){
-        if (username=="trang" && password=="trang"){
+        val signIn = findViewById<LinearLayout>(R.id.sign_in_google)
+        signIn.setOnClickListener {
             startActivity(Intent(this, HomePage::class.java))
-        }
-        else {
-            Toast.makeText(this, "Invalid username or password", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -62,7 +49,7 @@ class LoginActivity : AppCompatActivity() {
 
         val clickableSpan = object : ClickableSpan(){
             override fun onClick(widget: View) {
-                startActivity(Intent(this@LoginActivity, SignUp::class.java))
+                startActivity(Intent(this@LoginActivity, SignUpwithOAuth::class.java))
             }
         }
 

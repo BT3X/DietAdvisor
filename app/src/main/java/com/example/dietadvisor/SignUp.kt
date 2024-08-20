@@ -8,7 +8,7 @@ import android.widget.AutoCompleteTextView
 
 class SignUp : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        getSupportActionBar()?.hide()
+        supportActionBar?.hide()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_sign_up)

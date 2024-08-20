@@ -29,7 +29,7 @@ class Tracking : AppCompatActivity() {
     lateinit var barEntriesList: ArrayList<BarEntry>
     @SuppressLint("SimpleDateFormat")
     override fun onCreate(savedInstanceState: Bundle?) {
-        getSupportActionBar()?.hide()
+        supportActionBar?.hide()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_tracking)

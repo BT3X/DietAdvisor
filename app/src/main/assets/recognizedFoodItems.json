@@ -1,0 +1,46 @@
+[
+  {
+    "bbox": [
+      46,
+      0,
+      328,
+      290
+    ],
+    "class": 15,
+    "confidence": 0.9714798927307129,
+    "name": "mustard greens"
+  },
+  {
+    "bbox": [
+      282,
+      170,
+      492,
+      366
+    ],
+    "class": 9,
+    "confidence": 0.9678958654403687,
+    "name": "firm tofu"
+  },
+  {
+    "bbox": [
+      77,
+      314,
+      403,
+      610
+    ],
+    "class": 13,
+    "confidence": 0.9664177894592285,
+    "name": "grilled pork"
+  },
+  {
+    "bbox": [
+      533,
+      561,
+      599,
+      626
+    ],
+    "class": 4,
+    "confidence": 0.9562643766403198,
+    "name": "coin"
+  }
+]

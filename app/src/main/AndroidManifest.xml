@@ -20,7 +20,7 @@
             android:exported="false"
             android:theme="@style/CustomAppTheme"/>
         <activity
-            android:name=".profile"
+            android:name=".UserProfile"
             android:exported="false"
             android:theme="@style/CustomAppTheme" />
         <activity

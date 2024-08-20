@@ -13,7 +13,7 @@ import ir.mahozad.android.PieChart
 
 class HomePage : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        getSupportActionBar()?.hide()
+        supportActionBar?.hide()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_home_page)
@@ -40,7 +40,7 @@ class HomePage : AppCompatActivity() {
             startActivity(Intent(this, Recommendations::class.java))
         }
         profileButton.setOnClickListener {
-            startActivity(Intent(this, profile::class.java))
+            startActivity(Intent(this, UserProfile::class.java))
         }
 
         val caloriePC = findViewById<PieChart>(R.id.calorie_pc)
