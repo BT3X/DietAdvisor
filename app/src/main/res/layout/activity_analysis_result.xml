@@ -61,6 +61,7 @@
         app:layout_constraintTop_toBottomOf="@+id/result_image"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fillViewport="true"
@@ -70,15 +71,13 @@
             android:id="@+id/table"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-
             android:divider="@drawable/divider_row"
             android:showDividers="middle"
             android:dividerPadding="1dp"
             android:background="@drawable/table_background">
             <TableRow
                 android:layout_width="match_parent"
-                android:background="@color/greenButton"
+                android:background="@drawable/table_top_row_bg"
                 android:divider="@drawable/divider_column"
                 android:showDividers="middle"
                 android:dividerPadding="1dp">
