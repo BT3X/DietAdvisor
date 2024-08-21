@@ -29,19 +29,5 @@
 
         As the years passed, the village of Eldertree continued to thrive, its people living in harmony with the land and with each other. The elder tree, their guardian and symbol of strength, stood as it had for centuries, its roots deep in the earth, its branches reaching for the sky. And as long as the tree stood, the villagers knew that they, too, would endure, no matter what challenges the mountains might bring.\n\n
     </string>
-    <string-array name="Gender">
-        <item>Male</item>
-        <item>Female</item>
-        <item>Non-binary</item>
-    </string-array>
-    <string-array name="DietGoal">
-        <item>Lose weight</item>
-        <item>Stay the same</item>
-        <item>Gain weight</item>
-    </string-array>
-    <string-array name="Language">
-        <item>Chinese</item>
-        <item>English</item>
-    </string-array>
 
 </resources>

@@ -5,7 +5,7 @@
         <!-- Customize your theme here -->
         <item name="colorPrimary">@color/background</item>
         <item name="colorPrimaryDark">@color/greenText</item>
-        <item name="colorAccent">@color/grayText</item>
+        <item name="colorAccent">@color/greenButton</item>
         <!-- You can customize other theme attributes here -->
         <item name="materialCalendarStyle">@style/Widget.MaterialComponents.MaterialCalendar</item>
         <item name="materialCalendarFullscreenTheme">@style/ThemeOverlay.MaterialComponents.MaterialCalendar.Fullscreen</item>

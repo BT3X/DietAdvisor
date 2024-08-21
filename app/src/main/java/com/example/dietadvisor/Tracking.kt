@@ -1,9 +1,11 @@
 package com.example.dietadvisor
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -84,6 +86,22 @@ class Tracking : AppCompatActivity() {
 
         // on below line we are enabling description as false
         barChart.description.isEnabled = false
+
+        val homeButton = findViewById<FrameLayout>(R.id.home_button)
+        val recommendationsButton = findViewById<FrameLayout>(R.id.recommendations_button)
+        val profileButton = findViewById<FrameLayout>(R.id.profile_button)
+
+        homeButton.setOnClickListener {
+            startActivity(Intent(this, HomePage::class.java))
+        }
+
+        recommendationsButton.setOnClickListener {
+            startActivity(Intent(this, Recommendations::class.java))
+        }
+
+        profileButton.setOnClickListener {
+            startActivity(Intent(this, UserProfile::class.java))
+        }
 
     }
     private fun getBarChartData() {

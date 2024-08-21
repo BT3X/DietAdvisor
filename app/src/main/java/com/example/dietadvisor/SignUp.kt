@@ -12,9 +12,6 @@ class SignUp : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_sign_up)
-        val genders = resources.getStringArray(R.array.Gender)
-        val arrayAdapter = ArrayAdapter(this, R.layout.dropdown_item, genders)
-        val autocompleteTV = findViewById<AutoCompleteTextView>(R.id.gender_dropdown)
-        autocompleteTV.setAdapter(arrayAdapter)
+
     }
 }

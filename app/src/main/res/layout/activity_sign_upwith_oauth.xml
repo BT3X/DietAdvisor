@@ -56,8 +56,8 @@
                 android:textColor="@color/greenText"
                 android:textColorHint="@color/grayTextInTextView"
                 android:textSize="15sp"
-                android:inputType="date"
-                android:fontFamily="@font/itim"/>
+                android:focusable="false"
+                android:clickable="true" />
 
         </LinearLayout>
         <LinearLayout
@@ -82,8 +82,7 @@
                 android:layout_weight="3"
                 android:layout_height="wrap_content"
                 android:inputType="none"
-                android:hint="Choose Gender"
-                android:fontFamily="@font/itim"
+                android:hint="Gender"
                 android:textColorHint="@color/grayTextInTextView"
                 android:textSize="15sp"
                 android:textColor="@color/greenText"
@@ -116,7 +115,7 @@
                 android:textColor="@color/greenText"
                 android:textColorHint="@color/grayTextInTextView"
                 android:textSize="15sp"
-                android:fontFamily="@font/itim"/>
+                android:inputType="number"/>
 
         </LinearLayout>
         <LinearLayout
@@ -145,7 +144,7 @@
                 android:textColor="@color/greenText"
                 android:textColorHint="@color/grayTextInTextView"
                 android:textSize="15sp"
-                android:fontFamily="@font/itim"/>
+                android:inputType="number"/>
 
         </LinearLayout>
         <LinearLayout
@@ -171,7 +170,6 @@
                 android:layout_height="wrap_content"
                 android:inputType="none"
                 android:hint="Dietary Goal"
-                android:fontFamily="@font/itim"
                 android:textColorHint="@color/grayTextInTextView"
                 android:textSize="15sp"
                 android:textColor="@color/greenText"
@@ -202,7 +200,6 @@
                 android:layout_height="wrap_content"
                 android:inputType="none"
                 android:hint="Language"
-                android:fontFamily="@font/itim"
                 android:textColorHint="@color/grayTextInTextView"
                 android:textSize="15sp"
                 android:textColor="@color/greenText"
@@ -211,6 +208,7 @@
         </LinearLayout>
 
         <Button
+            android:id="@+id/save_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Save"
