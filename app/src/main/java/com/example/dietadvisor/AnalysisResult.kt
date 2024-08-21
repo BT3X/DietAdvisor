@@ -56,40 +56,45 @@ class AnalysisResult : AppCompatActivity() {
                 text = food.name
                 typeface = font
                 textSize = 17F
-                setBackgroundResource(R.drawable.table_background)
+//                setBackgroundResource(R.drawable.table_background)
                 layoutParams = TableRow.LayoutParams(220, TableRow.LayoutParams.WRAP_CONTENT)
+                setPadding(16, 8, 16, 8)
             }
 
             val caloriesTextView = TextView(this).apply {
                 text = String.format("%.1f", food.calories)
                 typeface = font
                 textSize = 17F
-                setBackgroundResource(R.drawable.table_background)
+//                setBackgroundResource(R.drawable.table_background)
                 layoutParams = TableRow.LayoutParams(150, TableRow.LayoutParams.WRAP_CONTENT)
+                setPadding(16, 8, 16, 8)
             }
 
             val carbsTextView = TextView(this).apply {
                 text = String.format("%.1f", food.carbohydrates)
                 typeface = font
                 textSize = 17F
-                setBackgroundResource(R.drawable.table_background)
+//                setBackgroundResource(R.drawable.table_background)
                 layoutParams = TableRow.LayoutParams(150, TableRow.LayoutParams.WRAP_CONTENT)
+                setPadding(16, 8, 16, 8)
             }
 
             val proteinTextView = TextView(this).apply {
                 text = String.format("%.1f", food.protein)
                 typeface = font
                 textSize = 17F
-                setBackgroundResource(R.drawable.table_background)
+//                setBackgroundResource(R.drawable.table_background)
                 layoutParams = TableRow.LayoutParams(150, TableRow.LayoutParams.WRAP_CONTENT)
+                setPadding(16, 8, 16, 8)
             }
 
             val fatTextView = TextView(this).apply {
                 text = String.format("%.1f", food.fat)
                 typeface = font
                 textSize = 17F
-                setBackgroundResource(R.drawable.table_background)
+//                setBackgroundResource(R.drawable.table_background)
                 layoutParams = TableRow.LayoutParams(150, TableRow.LayoutParams.WRAP_CONTENT)
+                setPadding(16, 8, 16, 8)
             }
 
             tableRow.addView(nameTextView)
@@ -97,6 +102,8 @@ class AnalysisResult : AppCompatActivity() {
             tableRow.addView(carbsTextView)
             tableRow.addView(proteinTextView)
             tableRow.addView(fatTextView)
+            tableRow.showDividers = TableRow.SHOW_DIVIDER_MIDDLE
+            tableRow.dividerDrawable = ResourcesCompat.getDrawable(resources, R.drawable.divider_column, null)
 
             tableLayout.addView(tableRow)
 
@@ -114,40 +121,45 @@ class AnalysisResult : AppCompatActivity() {
             typeface = totalFont
             setTypeface(typeface, Typeface.BOLD)
             textSize = 17F
-            setBackgroundResource(R.drawable.table_background)
+//            setBackgroundResource(R.drawable.table_background)
             layoutParams = TableRow.LayoutParams(220, TableRow.LayoutParams.WRAP_CONTENT)
+            setPadding(16, 8, 16, 8)
         }
 
         val totalCaloriesTextView = TextView(this).apply {
             text = String.format("%.1f", totalCalories)
             typeface = totalFont
             textSize = 17F
-            setBackgroundResource(R.drawable.table_background)
+//            setBackgroundResource(R.drawable.table_background)
             layoutParams = TableRow.LayoutParams(150, TableRow.LayoutParams.WRAP_CONTENT)
+            setPadding(16, 8, 16, 8)
         }
 
         val totalCarbsTextView = TextView(this).apply {
             text = String.format("%.1f", totalCarbs)
             typeface = totalFont
             textSize = 17F
-            setBackgroundResource(R.drawable.table_background)
+//            setBackgroundResource(R.drawable.table_background)
             layoutParams = TableRow.LayoutParams(150, TableRow.LayoutParams.WRAP_CONTENT)
+            setPadding(16, 8, 16, 8)
         }
 
         val totalProteinTextView = TextView(this).apply {
             text = String.format("%.1f", totalProtein)
             typeface = totalFont
             textSize = 17F
-            setBackgroundResource(R.drawable.table_background)
+//            setBackgroundResource(R.drawable.table_background)
             layoutParams = TableRow.LayoutParams(150, TableRow.LayoutParams.WRAP_CONTENT)
+            setPadding(16, 8, 16, 8)
         }
 
         val totalFatTextView = TextView(this).apply {
             text = String.format("%.1f", totalFat)
             typeface = totalFont
             textSize = 17F
-            setBackgroundResource(R.drawable.table_background)
+//            setBackgroundResource(R.drawable.table_background)
             layoutParams = TableRow.LayoutParams(150, TableRow.LayoutParams.WRAP_CONTENT)
+            setPadding(16, 8, 16, 8)
         }
 
         totalRow.addView(totalTextView)
@@ -155,6 +167,8 @@ class AnalysisResult : AppCompatActivity() {
         totalRow.addView(totalCarbsTextView)
         totalRow.addView(totalProteinTextView)
         totalRow.addView(totalFatTextView)
+        totalRow.showDividers = TableRow.SHOW_DIVIDER_MIDDLE
+        totalRow.dividerDrawable = ResourcesCompat.getDrawable(resources, R.drawable.divider_column, null)
 
         tableLayout.addView(totalRow)
 

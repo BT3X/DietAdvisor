@@ -50,16 +50,18 @@ class RecognitionResult : AppCompatActivity() {
                 gravity = android.view.Gravity.CENTER
                 typeface = font
                 textSize = 17F
-                setBackgroundResource(R.drawable.table_background)
+//                setBackgroundResource(R.drawable.table_background)
                 layoutParams = TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f)
+                setPadding(16, 8, 16, 8)
             }
 
             val nameTextView = TextView(this).apply {
                 text = food.name
                 typeface = font
                 textSize = 17F
-                setBackgroundResource(R.drawable.table_background)
+//                setBackgroundResource(R.drawable.table_background)
                 layoutParams = TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 2f)
+                setPadding(16, 8, 16, 8)
             }
 
             val changeTextView = TextView(this).apply {
@@ -68,10 +70,11 @@ class RecognitionResult : AppCompatActivity() {
                 spannableString.setSpan(UnderlineSpan(), 0, changeText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                 text = spannableString
                 gravity = android.view.Gravity.CENTER
-                setBackgroundResource(R.drawable.table_background)
+//                setBackgroundResource(R.drawable.table_background)
                 typeface = font
                 textSize = 17F
                 layoutParams = TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f)
+                setPadding(16, 8, 16, 8)
 
                 setOnClickListener {
                     showChangeFoodDialog(food, nameTextView)
@@ -81,6 +84,8 @@ class RecognitionResult : AppCompatActivity() {
             tableRow.addView(idTextView)
             tableRow.addView(nameTextView)
             tableRow.addView(changeTextView)
+            tableRow.dividerDrawable = ResourcesCompat.getDrawable(resources, R.drawable.divider_column, null)
+            tableRow.showDividers = TableRow.SHOW_DIVIDER_MIDDLE
 
             println("Adding row $index with food name: ${food.name}")
 

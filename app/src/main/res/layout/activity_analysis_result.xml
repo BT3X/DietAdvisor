@@ -71,13 +71,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:divider="@color/greenText"
-            android:showDividers="middle"
-            android:dividerPadding="8dp">
 
+            android:divider="@drawable/divider_row"
+            android:showDividers="middle"
+            android:dividerPadding="1dp"
+            android:background="@drawable/table_background">
             <TableRow
                 android:layout_width="match_parent"
-                android:background="@color/greenButton">
+                android:background="@color/greenButton"
+                android:divider="@drawable/divider_column"
+                android:showDividers="middle"
+                android:dividerPadding="1dp">
 
                 <TextView
                     android:layout_width="220dp"
@@ -87,7 +91,6 @@
                     android:textSize="17sp"
                     android:gravity="center"
                     android:padding="10dp"
-                    android:background="@drawable/table_background"
                     android:textColor="@color/grayText"/>
 
                 <TextView
@@ -98,7 +101,6 @@
                     android:textStyle="bold"
                     android:gravity="center"
                     android:padding="10dp"
-                    android:background="@drawable/table_background"
                     android:textColor="@color/grayText"/>
 
                 <TextView
@@ -109,7 +111,6 @@
                     android:textStyle="bold"
                     android:gravity="center"
                     android:padding="10dp"
-                    android:background="@drawable/table_background"
                     android:textColor="@color/grayText"/>
 
                 <TextView
@@ -120,7 +121,6 @@
                     android:textStyle="bold"
                     android:gravity="center"
                     android:padding="10dp"
-                    android:background="@drawable/table_background"
                     android:textColor="@color/grayText"/>
 
                 <TextView
@@ -131,7 +131,6 @@
                     android:textStyle="bold"
                     android:gravity="center"
                     android:padding="10dp"
-                    android:background="@drawable/table_background"
                     android:textColor="@color/grayText"/>
             </TableRow>
 
