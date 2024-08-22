@@ -53,9 +53,9 @@ class SignUpwithOAuth : AppCompatActivity() {
         val languageDropdown = findViewById<AutoCompleteTextView>(R.id.language_dropdown)
 
         // Define the data for the dropdown menus
-        val genderOptions = arrayOf("Male", "Female", "Non-binary")
-        val dietGoalOptions = arrayOf("Lose Weight", "Gain Weight", "Stay the Same")
-        val languageOptions = arrayOf("English", "Chinese")
+        val genderOptions = resources.getStringArray(R.array.gender_options)
+        val dietGoalOptions = resources.getStringArray(R.array.diet_goal_options)
+        val languageOptions = resources.getStringArray(R.array.language_options)
 
         // Set up the adapters for the dropdowns
         val genderAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, genderOptions)

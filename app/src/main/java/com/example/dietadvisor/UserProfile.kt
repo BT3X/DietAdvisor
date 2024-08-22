@@ -69,7 +69,7 @@ class UserProfile : AppCompatActivity() {
         val changeLanguage = findViewById<ImageView>(R.id.change_language)
 
         changeUsername.setOnClickListener {
-            showEditTextDialog("Edit Username", findViewById<TextView>(R.id.username).text.toString()) { newValue ->
+            showEditTextDialog(resources.getString(R.string.edit_username), findViewById<TextView>(R.id.username).text.toString()) { newValue ->
                 findViewById<TextView>(R.id.username).text = newValue
             }
         }
@@ -81,34 +81,34 @@ class UserProfile : AppCompatActivity() {
         }
 
         changeGender.setOnClickListener {
-            val genderOptions = arrayOf("Male", "Female", "Other")
-            showDropdownMenuDialog("Select Gender", genderOptions, findViewById<TextView>(R.id.gender).text.toString()) { newValue ->
+            val genderOptions = resources.getStringArray(R.array.gender_options)
+            showDropdownMenuDialog(resources.getString(R.string.select_gender), genderOptions, findViewById<TextView>(R.id.gender).text.toString()) { newValue ->
                 findViewById<TextView>(R.id.gender).text = newValue
             }
         }
 
         changeWeight.setOnClickListener {
-            showNumberInputDialog("Edit Weight (kg)", findViewById<TextView>(R.id.weight).text.toString()) { newValue ->
+            showNumberInputDialog(resources.getString(R.string.edit_weight), findViewById<TextView>(R.id.weight).text.toString()) { newValue ->
                 findViewById<TextView>(R.id.weight).text = newValue
             }
         }
 
         changeHeight.setOnClickListener {
-            showNumberInputDialog("Edit Height (cm)", findViewById<TextView>(R.id.height).text.toString()) { newValue ->
+            showNumberInputDialog(resources.getString(R.string.edit_height), findViewById<TextView>(R.id.height).text.toString()) { newValue ->
                 findViewById<TextView>(R.id.height).text = newValue
             }
         }
 
         changeDietGoal.setOnClickListener {
-            val dietGoalOptions = arrayOf("Lose Weight", "Gain Weight", "Stay the same")
-            showDropdownMenuDialog("Select Diet Goal", dietGoalOptions, findViewById<TextView>(R.id.diet_goal).text.toString()) { newValue ->
+            val dietGoalOptions = resources.getStringArray(R.array.diet_goal_options)
+            showDropdownMenuDialog(resources.getString(R.string.select_diet_goal), dietGoalOptions, findViewById<TextView>(R.id.diet_goal).text.toString()) { newValue ->
                 findViewById<TextView>(R.id.diet_goal).text = newValue
             }
         }
 
         changeLanguage.setOnClickListener {
-            val languageOptions = arrayOf("English", "Chinese")
-            showDropdownMenuDialog("Select Language", languageOptions, findViewById<TextView>(R.id.language).text.toString()) { newValue ->
+            val languageOptions = resources.getStringArray(R.array.language_options)
+            showDropdownMenuDialog(resources.getString(R.string.select_language), languageOptions, findViewById<TextView>(R.id.language).text.toString()) { newValue ->
                 findViewById<TextView>(R.id.language).text = newValue
             }
         }
@@ -147,7 +147,7 @@ class UserProfile : AppCompatActivity() {
             callback(input.text.toString())
             dialog.dismiss()
         }
-        builder.setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
+        builder.setNegativeButton(resources.getString(R.string.cancel)) { dialog, _ -> dialog.cancel() }
 
         builder.show()
     }
@@ -180,7 +180,7 @@ class UserProfile : AppCompatActivity() {
             callback(input.text.toString())
             dialog.dismiss()
         }
-        builder.setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
+        builder.setNegativeButton(resources.getString(R.string.cancel)) { dialog, _ -> dialog.cancel() }
 
         builder.show()
     }
@@ -194,7 +194,7 @@ class UserProfile : AppCompatActivity() {
             dialog.dismiss()
         }
 
-        builder.setNegativeButton("Cancel") { dialog, _ -> dialog.cancel() }
+        builder.setNegativeButton(resources.getString(R.string.cancel)) { dialog, _ -> dialog.cancel() }
 
         builder.show()
     }

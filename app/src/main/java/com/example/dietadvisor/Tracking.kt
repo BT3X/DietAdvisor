@@ -68,7 +68,7 @@ class Tracking : AppCompatActivity() {
                 val startDateString = dateFormatter.format(Date(startDate))
                 val endDateString = dateFormatter.format(Date(endDate))
 
-                Toast.makeText(this, "Selected date range: $startDateString to $endDateString", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, resources.getString(R.string.select_date_range)+"$startDateString " + resources.getString(R.string.to) + " $endDateString", Toast.LENGTH_LONG).show()
 
                 // Load and filter the user data based on the selected date range
                 intakeData = loadUserInfo(startDateString, endDateString)
@@ -76,11 +76,11 @@ class Tracking : AppCompatActivity() {
             }
 
             datePicker.addOnNegativeButtonClickListener {
-                Toast.makeText(this, "${datePicker.headerText} is cancelled", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "${datePicker.headerText} "+resources.getString(R.string.is_cancelled), Toast.LENGTH_LONG).show()
             }
 
             datePicker.addOnCancelListener {
-                Toast.makeText(this, "Date Picker Cancelled", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, resources.getString(R.string.date_picker_cancelled), Toast.LENGTH_LONG).show()
             }
         }
 

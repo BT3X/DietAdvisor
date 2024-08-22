@@ -8,6 +8,7 @@
     <string name="signin_line">Sign In with Line</string>
     <string name="or">or</string>
     <string name="signup_prompt">Not a member? Sign up now!</string>
+    <string name="signup_string">Sign up now!</string>
     <string name="random_text">
         Nestled deep within the verdant folds of towering mountains, the village of Eldertree was a place where time seemed to stand still. The villagers, a proud and resilient people, had lived in harmony with nature for generations, their lives dictated by the rhythms of the land and the seasons.\n\n
 
@@ -69,6 +70,56 @@
     <string name="tracking_title">Diet Tracking</string>
     <string name="select_date">Select Date</string>
     <string name="total">Total</string>
+    <string-array name="gender_options">
+        <item>Female</item>
+        <item>Male</item>
+        <item>Non-binary</item>
+    </string-array>
+    <string-array name="diet_goal_options">
+        <item>Lose Weight</item>
+        <item>Gain Weight</item>
+        <item>Stay the Same</item>
+    </string-array>
+    <string-array name="language_options">
+        <item>English</item>
+        <item>Chinese</item>
+    </string-array>
+    <string name="edit_username">Edit Username</string>
+    <string name="select_gender">Select Gender</string>
+    <string name="edit_weight">Edit Weight (kg)</string>
+    <string name="edit_height">Edit Height (cm)</string>
+    <string name="select_diet_goal">Select Dietary Goal</string>
+    <string name="select_language">Select Language</string>
+    <string name="select_date_range">Selected date range: </string>
+    <string name="to">to</string>
+    <string name="is_cancelled">is cancelled</string>
+    <string name="date_picker_cancelled">Date Picker Cancelled</string>
+    <string name="change">Change</string>
+    <string-array name="food_items">
+        <item>Kabayaki sea bream fillet</item>
+        <item>Spam</item>
+        <item>apple -sliced-</item>
+        <item>cabbage</item>
+        <item>creamy tofu</item>
+        <item>creamy tofu -without sauce-</item>
+        <item>cucumber</item>
+        <item>egg tofu</item>
+        <item>firm tofu</item>
+        <item>fish cake</item>
+        <item>fried chicken cutlet</item>
+        <item>fried potato</item>
+        <item>grilled pork</item>
+        <item>guava -sliced-</item>
+        <item>mustard greens</item>
+        <item>pig blood curd</item>
+        <item>pig liver</item>
+        <item>pineapple</item>
+        <item>pumpkin</item>
+        <item>red grilled pork</item>
+        <item>soy egg</item>
+        <item>sweet potato leaves</item>
+    </string-array>
+    <string name="select_food_item">Select Food Item</string>
 
 
 

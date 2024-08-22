@@ -39,7 +39,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun signUpRequest (signUpTextView: TextView){
-        val text = "Not a member? Sign up now!"
+        val text = resources.getString(R.string.signup_prompt)
         val spannableString = SpannableString(text)
 
         val clickableSpan = object : ClickableSpan(){
@@ -48,8 +48,8 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-        val startIndex = text.indexOf("Sign up now!")
-        val endIndex = startIndex + "Sign up now!".length
+        val startIndex = text.indexOf(resources.getString(R.string.signup_string))
+        val endIndex = startIndex + resources.getString(R.string.signup_string).length
         spannableString.setSpan(clickableSpan, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 
         val colorSpan = ForegroundColorSpan(ContextCompat.getColor(this, R.color.greenText))

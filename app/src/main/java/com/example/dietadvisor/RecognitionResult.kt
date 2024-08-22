@@ -62,7 +62,7 @@ class RecognitionResult : AppCompatActivity() {
             }
 
             val changeTextView = TextView(this).apply {
-                val changeText = "Change"
+                val changeText = resources.getString(R.string.change)
                 val spannableString = SpannableString(changeText)
                 spannableString.setSpan(UnderlineSpan(), 0, changeText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                 text = spannableString
@@ -122,16 +122,10 @@ class RecognitionResult : AppCompatActivity() {
     }
 
     private fun showChangeFoodDialog(foodItem: FoodItem, nameTextView: TextView) {
-        val foodOptions = arrayOf(
-            "Kabayaki sea bream fillet", "Spam", "apple -sliced-", "cabbage", "creamy tofu",
-            "creamy tofu -without sauce-", "cucumber", "egg tofu", "firm tofu", "fish cake",
-            "fried chicken cutlet", "fried potato", "grilled pork", "guava -sliced-", "mustard greens",
-            "pig blood curd", "pig liver", "pineapple", "pumpkin", "red grilled pork", "soy egg",
-            "sweet potato leaves"
-        )
+        val foodOptions = resources.getStringArray(R.array.food_items)
 
         MaterialAlertDialogBuilder(this)
-            .setTitle("Select Food Item")
+            .setTitle(resources.getString(R.string.select_food_item))
             .setItems(foodOptions) { _, which ->
                 val selectedName = foodOptions[which]
                 nameTextView.text = selectedName
