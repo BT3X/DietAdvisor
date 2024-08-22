@@ -49,15 +49,121 @@
         android:textAllCaps="false"
         android:padding="10dp"/>
 
-    <com.github.mikephil.charting.charts.BarChart
-        android:id="@+id/barChart"
-        android:layout_marginTop="30dp"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
+    <LinearLayout
+        android:id="@+id/toggle_switches"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/pick_date_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        />
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_margin="15dp">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Calories"
+                android:textSize="17sp"/>
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/calorie_toggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                app:trackTint="@color/switch_track_color"
+                app:thumbTint="@color/grayTextInTextView"
+                style="@style/Widget.App.Switch"
+                tools:ignore="TouchTargetSizeCheck"
+                android:layout_margin="8dp"/>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Carbohydrate"
+                android:textSize="17sp"/>
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/carb_toggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:checked="true"
+                app:trackTint="@color/switch_track_color"
+                app:thumbTint="@color/grayTextInTextView"
+                style="@style/Widget.App.Switch"
+                tools:ignore="TouchTargetSizeCheck"
+                android:layout_margin="8dp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Protein"
+                android:textSize="17sp"/>
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/protein_toggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:checked="true"
+                app:trackTint="@color/switch_track_color"
+                app:thumbTint="@color/grayTextInTextView"
+                style="@style/Widget.App.Switch"
+                tools:ignore="TouchTargetSizeCheck"
+                android:layout_margin="8dp"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Fat"
+                android:textSize="17sp"/>
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/fat_toggle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+
+                android:checked="true"
+                app:trackTint="@color/switch_track_color"
+                app:thumbTint="@color/grayTextInTextView"
+                style="@style/Widget.App.Switch"
+                tools:ignore="TouchTargetSizeCheck"
+                android:layout_margin="8dp"/>
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/barChart"
+        android:layout_width="400dp"
+        android:layout_height="400dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toggle_switches"/>
+
+
+
 
 
     <LinearLayout
