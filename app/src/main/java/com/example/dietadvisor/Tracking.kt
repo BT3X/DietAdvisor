@@ -27,14 +27,14 @@ import java.util.*
 
 class Tracking : AppCompatActivity() {
 
-    lateinit var btnDatePicker: Button
-    lateinit var barChart: BarChart
+    private lateinit var btnDatePicker: Button
+    private lateinit var barChart: BarChart
 
     // Toggles
-    lateinit var calorieToggle: MaterialSwitch
-    lateinit var carbToggle: MaterialSwitch
-    lateinit var proteinToggle: MaterialSwitch
-    lateinit var fatToggle: MaterialSwitch
+    private lateinit var calorieToggle: MaterialSwitch
+    private lateinit var carbToggle: MaterialSwitch
+    private lateinit var proteinToggle: MaterialSwitch
+    private lateinit var fatToggle: MaterialSwitch
 
     private var intakeData: List<IntakeData> = listOf()
 
@@ -180,7 +180,7 @@ class Tracking : AppCompatActivity() {
         // Calculate group settings based on active toggles
         val activeDataSets = mutableListOf<BarDataSet>()
         var groupSpace = 0.3f
-        var barSpace = 0.05f
+        val barSpace = 0.05f
         var barWidth = 0.125f
 
         if (calorieToggle.isChecked) activeDataSets.add(BarDataSet(calorieEntries, "Calories").apply {
@@ -215,6 +215,13 @@ class Tracking : AppCompatActivity() {
             1 -> {
                 barWidth = 0.5f
             }
+        }
+
+        if (activeDataSets.isEmpty()) {
+            barChart.clear() // Clear the chart
+//            barChart.setNoDataText("No data available. Please select at least one nutrient category.")
+            barChart.invalidate()
+            return
         }
 
         val data = BarData(*activeDataSets.toTypedArray()).apply {
@@ -256,7 +263,6 @@ class Tracking : AppCompatActivity() {
         barChart.isDragEnabled = true
         barChart.setNoDataTextColor(R.color.greenText)
         barChart.setNoDataTextTypeface(itimFont)
-        barChart.setVisibleXRangeMaximum(3f)
 
         barChart.xAxis.apply {
             position = XAxis.XAxisPosition.BOTTOM

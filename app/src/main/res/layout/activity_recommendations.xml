@@ -28,16 +28,38 @@
             android:layout_weight="2.5"
             android:padding="10dp"
             android:gravity="center"
-            android:text="Let me recommend you a healthy meal!"
+            android:text="@string/recommendations_convo"
             android:textSize="25sp"
             android:fontFamily="@font/itim"
             android:textColor="@color/greenText"/>
     </LinearLayout>
+    <TextView
+        android:id="@+id/page_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/header"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center"
+        android:text="@string/recommendations_title"
+        android:fontFamily="@font/lemon"
+        android:textSize="25sp"
+        android:paddingBottom="5dp" />
+    <TextView
+        android:id="@+id/chatgpt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/page_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/chatgpt"
+        android:gravity="center"
+        android:paddingBottom="5dp"/>
     <Button
         android:id="@+id/request_recommendations"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintTop_toBottomOf="@id/chatgpt"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:text="Get recommendations"
@@ -46,6 +68,8 @@
         android:background="@drawable/button"
         android:textSize="17sp"
         />
+
+
     <ScrollView
         android:id="@+id/recommendations_scroll_view"
         android:layout_width="0dp"
@@ -74,7 +98,8 @@
         android:layout_height="0dp"
         android:orientation="horizontal"
         app:layout_constraintHeight_percent="0.08"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:baselineAligned="false">
 
         <FrameLayout
             android:id="@+id/home_button"

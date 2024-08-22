@@ -29,5 +29,47 @@
 
         As the years passed, the village of Eldertree continued to thrive, its people living in harmony with the land and with each other. The elder tree, their guardian and symbol of strength, stood as it had for centuries, its roots deep in the earth, its branches reaching for the sky. And as long as the tree stood, the villagers knew that they, too, would endure, no matter what challenges the mountains might bring.\n\n
     </string>
+    <string name="analysis_convo">Here you go!</string>
+    <string name="analysis_title">Analysis Result</string>
+    <string name="food_name">Name</string>
+    <string name="calories">Calories</string>
+    <string name="carbohydrate">Carbohydrate</string>
+    <string name="protein">Protein</string>
+    <string name="fat">Fat</string>
+    <string name="cancel">Cancel</string>
+    <string name="add_meal_to_tracking">Add Meal to Tracking</string>
+    <string name="homepage_greetings">Hello, Trang!</string>
+    <string name="homepage_question">What are you eating today?</string>
+    <string name="photo_instruction">The photo used should be in a 1:1 ratio, taken with a top-down view, include a 10 yuan coin and all the food items should be separated from each other.</string>
+    <string name="upload">Upload</string>
+    <string name="camera">Camera</string>
+    <string name="homepage_consumption">Today\'s Consumption</string>
+    <string name="profile_convo">Let\'s look at your profile!</string>
+    <string name="profile_title">User Profile</string>
+    <string name="dob">Date of Birth</string>
+    <string name="gender">Gender</string>
+    <string name="weight">Weight</string>
+    <string name="height">Height</string>
+    <string name="diet_goal">Dietary Goal</string>
+    <string name="language">Language</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="recognition_convo">Please confirm the food items</string>
+    <string name="recognition_title">Recognized Food Items</string>
+    <string name="number">No.</string>
+    <string name="confirm">Confirm</string>
+    <string name="recommendations_convo">Let me recommend you a healthy meal!</string>
+    <string name="recommendations_title">Meal Recommendations</string>
+    <string name="chatgpt">Powered by GPT-4</string>
+    <string name="signup_oauth_title">Personal Information</string>
+    <string name="date_format">yyyy-mm-dd</string>
+    <string name="height_hint">Height in cm</string>
+    <string name="weight_hint">Weight in kg</string>
+    <string name="save">Save</string>
+    <string name="tracking_convo">Trang, let\'s see your eating pattern!</string>
+    <string name="tracking_title">Diet Tracking</string>
+    <string name="select_date">Select Date</string>
+    <string name="total">Total</string>
+
+
 
 </resources>

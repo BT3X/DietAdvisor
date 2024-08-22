@@ -28,7 +28,7 @@
             android:layout_weight="2.5"
             android:padding="10dp"
             android:gravity="center"
-            android:text="Please confirm the food items!"
+            android:text="@string/recognition_convo"
             android:textSize="25sp" />
     </LinearLayout>
     <TextView
@@ -39,7 +39,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:gravity="center"
-        android:text="Recognized Food Items"
+        android:text="@string/recognition_title"
         android:fontFamily="@font/lemon"
         android:textSize="25sp"
         android:paddingBottom="15dp"
@@ -83,7 +83,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="No."
+                android:text="@string/number"
                 android:textStyle="bold"
                 android:textSize="17sp"
                 android:paddingTop="8dp"
@@ -97,7 +97,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:text="Name"
+                android:text="@string/food_name"
                 android:textSize="17sp"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
@@ -138,7 +138,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/button"
-            android:text="Cancel"
+            android:text="@string/cancel"
             android:textSize="17sp"
             android:textColor="@color/grayText"
             android:layout_gravity="start"
@@ -148,7 +148,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/button"
-            android:text="Confirm"
+            android:text="@string/confirm"
             android:textSize="17sp"
             android:textColor="@color/grayText"
             android:layout_gravity="end"/>

@@ -15,7 +15,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import org.json.JSONArray
 import java.io.InputStream
-import java.lang.reflect.Type
 
 data class FoodItemAnalysis(
     val name: String,
@@ -117,7 +116,7 @@ class AnalysisResult : AppCompatActivity() {
         val totalFont = ResourcesCompat.getFont(this, R.font.itim)
 
         val totalTextView = TextView(this).apply {
-            text = "Total"
+            text = resources.getString(R.string.total)
             typeface = totalFont
             setTypeface(typeface, Typeface.BOLD)
             textSize = 17F

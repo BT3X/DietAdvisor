@@ -1,7 +1,6 @@
 package com.example.dietadvisor
 
 import android.content.Intent
-import android.graphics.Typeface
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
@@ -15,11 +14,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.setPadding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.json.JSONArray
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.InputStream
 
@@ -135,7 +132,7 @@ class RecognitionResult : AppCompatActivity() {
 
         MaterialAlertDialogBuilder(this)
             .setTitle("Select Food Item")
-            .setItems(foodOptions) { dialog, which ->
+            .setItems(foodOptions) { _, which ->
                 val selectedName = foodOptions[which]
                 nameTextView.text = selectedName
                 foodItem.name = selectedName
