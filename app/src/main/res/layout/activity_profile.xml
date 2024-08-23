@@ -255,6 +255,38 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:text="@string/activity_level"
+                android:textStyle="bold"
+                android:padding="10dp"
+                android:textAlignment="viewEnd"
+                android:textSize="17sp"/>
+            <TextView
+                android:id="@+id/activity_level"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="10dp"
+                android:textSize="17sp"
+                />
+
+            <ImageView
+                android:id="@+id/change_activity_level"
+                android:layout_width="0dp"
+                android:layout_height="20dp"
+                android:layout_weight="0.3"
+                app:srcCompat="@drawable/pencil"
+                android:layout_gravity="center"/>
+
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="@string/language"
                 android:textStyle="bold"
                 android:padding="10dp"

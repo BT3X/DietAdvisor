@@ -120,6 +120,15 @@
         <item>sweet potato leaves</item>
     </string-array>
     <string name="select_food_item">Select Food Item</string>
+    <string name="activity_level">Activity Level</string>
+    <string-array name="activity_level_options">
+        <item>Sedentary</item>
+        <item>Lightly active</item>
+        <item>Moderately active</item>
+        <item>Very active</item>
+        <item>Super active</item>
+    </string-array>
+    <string name="select_activity_level">Select Activity Level</string>
 
 
 

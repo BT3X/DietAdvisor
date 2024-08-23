@@ -51,11 +51,13 @@ class SignUpwithOAuth : AppCompatActivity() {
         val genderDropdown = findViewById<AutoCompleteTextView>(R.id.gender_dropdown)
         val dietGoalDropdown = findViewById<AutoCompleteTextView>(R.id.diet_goal_dropdown)
         val languageDropdown = findViewById<AutoCompleteTextView>(R.id.language_dropdown)
+        val activityDropdown = findViewById<AutoCompleteTextView>(R.id.activity_level_dropdown)
 
         // Define the data for the dropdown menus
         val genderOptions = resources.getStringArray(R.array.gender_options)
         val dietGoalOptions = resources.getStringArray(R.array.diet_goal_options)
         val languageOptions = resources.getStringArray(R.array.language_options)
+        val activityOptions = resources.getStringArray(R.array.activity_level_options)
 
         // Set up the adapters for the dropdowns
         val genderAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, genderOptions)
@@ -66,6 +68,9 @@ class SignUpwithOAuth : AppCompatActivity() {
 
         val languageAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, languageOptions)
         setupDropdown(languageDropdown, languageAdapter)
+
+        val activityLevelAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, activityOptions)
+        setupDropdown(activityDropdown, activityLevelAdapter)
 
         val saveButton = findViewById<Button>(R.id.save_button)
         saveButton.setOnClickListener {

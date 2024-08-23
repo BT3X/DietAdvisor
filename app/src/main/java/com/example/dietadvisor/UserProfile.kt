@@ -67,6 +67,7 @@ class UserProfile : AppCompatActivity() {
         val changeHeight = findViewById<ImageView>(R.id.change_height)
         val changeDietGoal = findViewById<ImageView>(R.id.change_diet_goal)
         val changeLanguage = findViewById<ImageView>(R.id.change_language)
+        val changeActivityLevel = findViewById<ImageView>(R.id.change_activity_level)
 
         changeUsername.setOnClickListener {
             showEditTextDialog(resources.getString(R.string.edit_username), findViewById<TextView>(R.id.username).text.toString()) { newValue ->
@@ -106,6 +107,13 @@ class UserProfile : AppCompatActivity() {
             }
         }
 
+        changeActivityLevel.setOnClickListener {
+            val activityOptions = resources.getStringArray(R.array.activity_level_options)
+            showDropdownMenuDialog(resources.getString(R.string.select_activity_level), activityOptions, findViewById<TextView>(R.id.activity_level).text.toString()) { newValue ->
+                findViewById<TextView>(R.id.activity_level).text = newValue
+            }
+        }
+
         changeLanguage.setOnClickListener {
             val languageOptions = resources.getStringArray(R.array.language_options)
             showDropdownMenuDialog(resources.getString(R.string.select_language), languageOptions, findViewById<TextView>(R.id.language).text.toString()) { newValue ->
@@ -119,6 +127,8 @@ class UserProfile : AppCompatActivity() {
             val inputStream: InputStream = assets.open("userInfo.json")
             val jsonString = inputStream.bufferedReader().use { it.readText() }
             val jsonObject = JSONObject(jsonString)
+            val jsonArray = jsonObject.getJSONArray("Intake")
+
 
             findViewById<TextView>(R.id.username).text = jsonObject.getString("Username")
             findViewById<TextView>(R.id.dob).text = jsonObject.getString("Date of Birth")
@@ -126,6 +136,7 @@ class UserProfile : AppCompatActivity() {
             findViewById<TextView>(R.id.height).text = jsonObject.getString("Height")
             findViewById<TextView>(R.id.weight).text = jsonObject.getString("Weight")
             findViewById<TextView>(R.id.diet_goal).text = jsonObject.getString("Dietary Goal")
+            findViewById<TextView>(R.id.activity_level).text = jsonObject.getString("Activity Level")
             findViewById<TextView>(R.id.language).text = jsonObject.getString("Language")
 
         } catch (e: Exception) {
