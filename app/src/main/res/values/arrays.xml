@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="gender_options">
+        <item>@string/gender_option_male</item>
+        <item>@string/gender_option_female</item>
+        <item>@string/gender_option_non_binary</item>
+    </string-array>
+
+    <string-array name="diet_goal_options">
+        <item>@string/diet_goal_lose_weight</item>
+        <item>@string/diet_goal_maintain_weight</item>
+        <item>@string/diet_goal_gain_weight</item>
+    </string-array>
+
+    <string-array name="language_options">
+        <item>@string/language_option_chinese</item>
+        <item>@string/language_option_english</item>
+    </string-array>
+
+    <string-array name="food_items">
+        <item>Kabayaki sea bream fillet</item>
+        <item>Spam</item>
+        <item>apple -sliced-</item>
+        <item>cabbage</item>
+        <item>creamy tofu</item>
+        <item>creamy tofu -without sauce-</item>
+        <item>cucumber</item>
+        <item>egg tofu</item>
+        <item>firm tofu</item>
+        <item>fish cake</item>
+        <item>fried chicken cutlet</item>
+        <item>fried potato</item>
+        <item>grilled pork</item>
+        <item>guava -sliced-</item>
+        <item>mustard greens</item>
+        <item>pig blood curd</item>
+        <item>pig liver</item>
+        <item>pineapple</item>
+        <item>pumpkin</item>
+        <item>red grilled pork</item>
+        <item>soy egg</item>
+        <item>sweet potato leaves</item>
+    </string-array>
+
+    <string-array name="activity_level_options">
+        <item>Sedentary</item>
+        <item>Lightly active</item>
+        <item>Moderately active</item>
+        <item>Very active</item>
+        <item>Super active</item>
+    </string-array>
+
+
+</resources>

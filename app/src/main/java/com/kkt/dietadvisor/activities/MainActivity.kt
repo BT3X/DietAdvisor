@@ -55,14 +55,14 @@ class MainActivity : ComponentActivity() {
                         hasNews = false,
                     ),
                     BottomNavigationItem(
-                        title = stringResource(id = R.string.navbar_Tracking),
+                        title = stringResource(id = R.string.navbar_tracking),
                         destinationScreen = NavBarScreen.TrackingScreen,
                         selectedIcon = Icons.Filled.BookmarkAdd,
                         unselectedIcon = Icons.Outlined.BookmarkAdd,
                         hasNews = false,
                     ),
                     BottomNavigationItem(
-                        title = stringResource(id = R.string.navbar_Recommend),
+                        title = stringResource(id = R.string.navbar_recommend),
                         destinationScreen = NavBarScreen.RecommendationScreen,
                         selectedIcon = Icons.AutoMirrored.Filled.Chat,
                         unselectedIcon = Icons.AutoMirrored.Outlined.Chat,

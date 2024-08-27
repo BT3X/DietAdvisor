@@ -11,4 +11,7 @@ sealed class NavBarScreen {
 
     @Serializable
     data object RecommendationScreen : NavBarScreen()
+
+    @Serializable
+    data object ProfileScreen : NavBarScreen()
 }

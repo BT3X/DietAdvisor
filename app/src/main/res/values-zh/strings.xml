@@ -2,7 +2,27 @@
 <resources>
     <string name="app_name">飲食顧問</string>
     <string name="navbar_home">首頁</string>
-    <string name="navbar_Tracking">紀錄</string>
-    <string name="navbar_Recommend">推薦</string>
-    <string name="confirmation_Recognize_Food_Items">辨識出的食物</string>
+    <string name="navbar_recommend">推薦</string>
+    <string name="confirmation_recognize_food_items">辨識出的食物</string>
+    <string name="navbar_tracking">紀錄</string>
+    <string name="navbar_profile">個人資料</string>
+    <string name="welcome_text">歡迎您使用</string>
+    <string name="username">名稱</string>
+    <string name="password">密碼</string>
+    <string name="signin_text">登入</string>
+    <string name="signin_google">使用Google登入</string>
+    <string name="signin_line">使用Line登入</string>
+    <string name="or">或</string>
+    <string name="signup_prompt">沒有會員? 註冊!</string>
+
+    <string name="gender_option_male">男生</string>
+    <string name="gender_option_female">女生</string>
+    <string name="gender_option_non_binary">非二元</string>
+
+    <string name="diet_goal_lose_weight">減肥</string>
+    <string name="diet_goal_maintain_weight">維持</string>
+    <string name="diet_goal_gain_weight">增重</string>
+
+    <string name="language_option_chinese">中文</string>
+    <string name="language_option_english">英文</string>
 </resources>

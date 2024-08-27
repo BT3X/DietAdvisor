@@ -1,7 +1,93 @@
 <resources>
     <string name="app_name">Diet Advisor</string>
     <string name="navbar_home">Home</string>
-    <string name="navbar_Tracking">Tracking</string>
-    <string name="navbar_Recommend">Recommend</string>
-    <string name="confirmation_Recognize_Food_Items">Recognize Food Items</string>
+    <string name="navbar_recommend">Recommend</string>
+    <string name="confirmation_recognize_food_items">Recognize Food Items</string>
+    <string name="navbar_tracking">Tracking</string>
+    <string name="navbar_profile">Profile</string>
+
+    <string name="welcome_text">Welcome to</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="signin_text">Sign In</string>
+    <string name="signin_google">Sign In with Google</string>
+    <string name="signin_line">Sign In with Line</string>
+    <string name="or">or</string>
+    <string name="signup_prompt">Not a member? Sign up now!</string>
+    <string name="random_text" translatable="false"> Nestled deep within the verdant folds of towering mountains, the village of Eldertree was a place where time seemed to stand still. The villagers, a proud and resilient people, had lived in harmony with nature for generations, their lives dictated by the rhythms of the land and the seasons.\n\n The village was named after the ancient tree that stood at its center, a colossal elder tree whose roots dug deep into the earth and whose branches spread wide, providing shelter to all who sought it. The tree was said to be as old as the mountains themselves, a living connection to the earth\'s ancient past. It was the heart of the village, and its presence was deeply revered by the villagers, who believed it to be a protector and a symbol of their enduring spirit.\n\n Life in Eldertree was simple yet fulfilling. The villagers farmed the fertile soil, growing crops that flourished under the clear mountain air. The fields were a patchwork of golden wheat, emerald green vegetables, and fragrant herbs, all nourished by the crystal-clear streams that flowed down from the mountains. In the spring, the orchards blossomed with delicate flowers, filling the air with the sweet scent of apples and cherries that would be harvested in the fall.\n\n The villagers were skilled artisans, their hands crafting everything from woven baskets to intricate wood carvings. They worked together, each person contributing their talents to the community, ensuring that no one was ever in need. The elders passed down their knowledge to the younger generations, teaching them the secrets of the land and the importance of living in harmony with it.\n\n The village was a place of peace and contentment, but it was not without its challenges. The mountains, though beautiful, were also harsh and unforgiving. The winters were long and cold, with snowdrifts that could bury entire houses and winds that howled through the night like a pack of wolves. The villagers had learned to prepare for these harsh months, storing food and firewood, and reinforcing their homes against the bitter cold.\n\n In the summer, the mountains brought other challenges. The streams that provided life-giving water could also become raging torrents, sweeping away anything in their path. The villagers worked tirelessly to maintain the dams and channels that controlled the flow of water, knowing that their lives depended on it. And always, there was the threat of landslides, when the rains came too heavy and the earth could no longer hold its grip on the steep slopes.\n\n But through all these challenges, the villagers of Eldertree remained steadfast. They knew that their strength came from their unity, and they faced every hardship together. The village was more than just a collection of houses; it was a family, bound by ties of blood and friendship, and by the shared belief in the enduring power of the elder tree.\n\n One of the most important traditions in Eldertree was the annual Harvest Festival, held in late autumn when the last of the crops had been gathered. The festival was a time of celebration, a chance to give thanks for the bounty of the land and to honor the spirits that watched over the village. The festival lasted for three days, with feasting, music, and dancing that brought the entire village together.\n\n On the final night of the festival, the villagers gathered around the elder tree for a solemn ceremony. The village elder, a wise and ancient woman known as Grandmother Willow, would lead the ceremony, offering prayers to the spirits and asking for their continued protection. It was said that on this night, the veil between the worlds was at its thinnest, and that the spirits of the ancestors walked among the living, joining in the celebration.\n\n As the years passed, the village of Eldertree continued to thrive, its people living in harmony with the land and with each other. The elder tree, their guardian and symbol of strength, stood as it had for centuries, its roots deep in the earth, its branches reaching for the sky. And as long as the tree stood, the villagers knew that they, too, would endure, no matter what challenges the mountains might bring.\n\n </string>
+
+    <!--Gender String Array Options (for String Array)-->
+    <string name="gender_option_male">Male</string>
+    <string name="gender_option_female">Female</string>
+    <string name="gender_option_non_binary">Non-binary</string>
+
+    <!--Diet Goals (for String Array)-->
+    <string name="diet_goal_lose_weight">Lose weight</string>
+    <string name="diet_goal_maintain_weight">Maintain weight</string>
+    <string name="diet_goal_gain_weight">Gain weight</string>
+
+    <!--Language Options (for String Array)-->
+    <string name="language_option_chinese">Chinese</string>
+    <string name="language_option_english">English</string>
+
+    <string name="analysis_convo">Here you go!</string>
+    <string name="analysis_title">Analysis Result</string>
+    <string name="food_name">Name</string>
+    <string name="calories">Calories</string>
+    <string name="carbohydrate">Carbohydrate</string>
+    <string name="protein">Protein</string>
+    <string name="fat">Fat</string>
+    <string name="cancel">Cancel</string>
+    <string name="add_meal_to_tracking">Add Meal to Tracking</string>
+    <string name="homepage_greetings">Hello, Trang!</string>
+    <string name="homepage_question">What are you eating today?</string>
+    <string name="photo_instruction">The photo used should be in a 1:1 ratio, taken with a top-down view, include a 10 yuan coin and all the food items should be separated from each other.</string>
+    <string name="upload">Upload</string>
+    <string name="camera">Camera</string>
+    <string name="homepage_consumption">Today\'s Consumption</string>
+    <string name="profile_convo">Let\'s look at your profile!</string>
+    <string name="profile_title">User Profile</string>
+    <string name="dob">Date of Birth</string>
+    <string name="gender">Gender</string>
+    <string name="weight">Weight</string>
+    <string name="height">Height</string>
+    <string name="diet_goal">Dietary Goal</string>
+    <string name="language">Language</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="recognition_convo">Please confirm the food items</string>
+    <string name="recognition_title">Recognized Food Items</string>
+    <string name="number">No.</string>
+    <string name="confirm">Confirm</string>
+    <string name="recommendations_convo">Let me recommend you a healthy meal!</string>
+    <string name="recommendations_title">Meal Recommendations</string>
+    <string name="chatgpt">Powered by GPT-4</string>
+    <string name="signup_oauth_title">Personal Information</string>
+    <string name="date_format">yyyy-mm-dd</string>
+    <string name="height_hint">Height in cm</string>
+    <string name="weight_hint">Weight in kg</string>
+    <string name="save">Save</string>
+    <string name="tracking_convo">Trang, let\'s see your eating pattern!</string>
+    <string name="tracking_title">Diet Tracking</string>
+    <string name="select_date">Select Date</string>
+    <string name="total">Total</string>
+    <string name="edit_username">Edit Username</string>
+    <string name="select_gender">Select Gender</string>
+    <string name="edit_weight">Edit Weight (kg)</string>
+    <string name="edit_height">Edit Height (cm)</string>
+    <string name="select_diet_goal">Select Dietary Goal</string>
+    <string name="select_language">Select Language</string>
+    <string name="select_date_range">Selected date range: </string>
+    <string name="to">to</string>
+    <string name="is_cancelled">is cancelled</string>
+    <string name="date_picker_cancelled">Date Picker Cancelled</string>
+    <string name="change">Change</string>
+    <string name="select_food_item">Select Food Item</string>
+    <string name="activity_level">Activity Level</string>
+    <string name="select_activity_level">Select Activity Level</string>
+
+    <!--For Google Sign-In-->
+    <string name="WEB_CLIENT_ID" translatable="false">908769963821-nfcfmbdtifcc0s1ta3secu4hppq1hra7.apps.googleusercontent.com</string>
+    <string name="DIET_ADVISOR_USER_ENDPOINT_URL" translatable="false">https://diet.kencs.net/user</string>
+    <string name="DIET_ADVISOR_YOLO_ENDPOINT_URL" translatable="false">https://diet.kencs.net/yolo</string>
+
 </resources>

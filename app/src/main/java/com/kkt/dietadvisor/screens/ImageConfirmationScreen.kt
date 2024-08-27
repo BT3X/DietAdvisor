@@ -1,7 +1,5 @@
 package com.kkt.dietadvisor.screens
 
-import android.content.Context
-import android.widget.Space
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,7 +24,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.kkt.dietadvisor.R
 import com.kkt.dietadvisor.models.DetectedFoodItem
 import com.kkt.dietadvisor.ui.theme.DietAdvisorTheme
@@ -44,7 +41,7 @@ fun ImageConfirmationScreen() {
                         modifier = Modifier
                             .fillMaxWidth()
                     ) {
-                        Text(text = stringResource(id = R.string.confirmation_Recognize_Food_Items)) // TODO: Replace with string resource
+                        Text(text = stringResource(id = R.string.confirmation_recognize_food_items)) // TODO: Replace with string resource
                     }
                 },
             )
