@@ -49,7 +49,7 @@ class RecognitionResult : AppCompatActivity() {
             val font = ResourcesCompat.getFont(this, R.font.itim)
             val idTextView = TextView(this).apply {
                 text = (index + 1).toString()
-                gravity = android.view.Gravity.CENTER
+                gravity = Gravity.CENTER
                 typeface = font
                 textSize = 17F
 //                setBackgroundResource(R.drawable.table_background)
@@ -71,7 +71,7 @@ class RecognitionResult : AppCompatActivity() {
                 val spannableString = SpannableString(changeText)
                 spannableString.setSpan(UnderlineSpan(), 0, changeText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                 text = spannableString
-                gravity = android.view.Gravity.CENTER
+                gravity = Gravity.CENTER
 //                setBackgroundResource(R.drawable.table_background)
                 typeface = font
                 textSize = 17F
@@ -112,7 +112,7 @@ class RecognitionResult : AppCompatActivity() {
             dialog.show()
             dialog.window?.setGravity(Gravity.CENTER)
 
-            val isSuccessful = false;
+            val isSuccessful = false
 
             dialogView.postDelayed({
                 dialog.dismiss()
