@@ -52,7 +52,7 @@ class Recommendations : AppCompatActivity() {
             .usePlugin(SoftBreakAddsNewLinePlugin.create())
             .build()
 
-        markwon.setMarkdown(recommendationText, resources.getString(R.string.markdown_text))
+        markwon.setMarkdown(recommendationText, resources.getString(R.string.another_markdown_text))
 
         val homepageButton = findViewById<FrameLayout>(R.id.home_button)
         val trackingButton = findViewById<FrameLayout>(R.id.tracking_button)
