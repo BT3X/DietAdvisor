@@ -1,6 +1,6 @@
 package com.kkt.dietadvisor.models
 
-// Classes to match the JSON shcema on the backend
+// Classes to match the JSON schema on the backend
 data class UserData(
     val personalInfo: PersonalInfo,
     val bodyMeasurements: BodyMeasurements,
@@ -38,7 +38,8 @@ data class IntakeEntry(
 
 data class NutritionalInfo(
     // Reused this class for both intakeHistory and lastMeal
-    val carb: Int,
-    val protein: Int,
-    val fat: Int,
+    val carb: Double,
+    val protein: Double,
+    val fat: Double,
+    val calorie: Double,
 )

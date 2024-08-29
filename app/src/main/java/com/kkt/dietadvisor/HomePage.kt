@@ -29,25 +29,7 @@ import java.util.Locale
 class HomePage : AppCompatActivity() {
 
     private lateinit var currentPhotoPath: String
-
-    // Init the image capture launcher & callback
-    private val captureImageLauncher = registerForActivityResult(
-        ActivityResultContracts.TakePicture()
-    ) { captureSuccessful ->
-        if (captureSuccessful) {
-            Log.d(TAG, "Image Capture Successful - Current Path: $currentPhotoPath")
-            val file = File(currentPhotoPath)
-            val imageUri = Uri.fromFile(file)
-
-            // Send the captured image's uri to the RecognitionResult activity
-            Log.d(TAG, "Starting RecognitionResult with PHOTO_URI: $imageUri")
-            val intent = Intent(this, RecognitionResult::class.java)
-            intent.putExtra("PHOTO_URI", imageUri.toString())
-            startActivity(intent)
-        } else {
-            Log.e(TAG, "Image Capture Failed")
-        }
-    }
+    private lateinit var accessToken: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         supportActionBar?.hide()
@@ -60,27 +42,18 @@ class HomePage : AppCompatActivity() {
             insets
         }
 
+        // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
+        // Retrieve access token from the intent extras
+        accessToken = intent.getStringExtra("ACCESS_TOKEN")
+            ?: throw IllegalArgumentException("Access token is missing from the intent")
+        Log.d(TAG, "onCreate: Access Token Retrieved: $accessToken")
+
         // Init views
         val trackingButton = findViewById<FrameLayout>(R.id.tracking_button)
         val recommendationsButton = findViewById<FrameLayout>(R.id.recommendations_button)
         val profileButton = findViewById<FrameLayout>(R.id.profile_button)
         val uploadButton = findViewById<LinearLayout>(R.id.upload_photo)
         val cameraButton = findViewById<LinearLayout>(R.id.camera_button)
-
-        // Init the Android 13 photo picker launcher & callback
-        val selectImageLauncher = registerForActivityResult(
-            ActivityResultContracts.PickVisualMedia()
-        ) { selectedImageUri ->
-            selectedImageUri?.let {
-                Log.d(TAG, "SelectMedia Successful - Uri: $selectedImageUri")
-                // TODO: Send the Uri to the RecognitionResult activity and do work
-                val intent = Intent(this, RecognitionResult::class.java)
-                intent.putExtra("PHOTO_URI", selectedImageUri.toString())
-                startActivity(intent)
-            } ?: run {
-                Log.e(TAG, "SelectMedia: Failed to retrieve Uri")
-            }
-        }
 
         /* Camera/Recognition Related */
         uploadButton.setOnClickListener {
@@ -104,7 +77,7 @@ class HomePage : AppCompatActivity() {
             startActivity(Intent(this, UserProfile::class.java))
         }
 
-        loadUserInfo() // TODO: Load data dynamically from backend
+        loadUserInfo() // TODO: Load data dynamically from backend (Waiting on Schema Update)
     }
 
     private fun createImageFile(): File {
@@ -138,6 +111,43 @@ class HomePage : AppCompatActivity() {
             captureImageLauncher.launch(photoURI)
         }
     }
+
+    // Init the image capture launcher & callback
+    private val captureImageLauncher = registerForActivityResult(
+        ActivityResultContracts.TakePicture()
+    ) { captureSuccessful ->
+        if (captureSuccessful) {
+            Log.d(TAG, "Image Capture Successful - Current Path: $currentPhotoPath")
+            val file = File(currentPhotoPath)
+            val imageUri = Uri.fromFile(file)
+
+            // Send the captured image's uri to the RecognitionResult activity
+            Log.d(TAG, "Starting RecognitionResult with PHOTO_URI: $imageUri")
+            val intent = Intent(this, RecognitionResult::class.java)
+            intent.putExtra("PHOTO_URI", imageUri.toString())
+            intent.putExtra("ACCESS_TOKEN", accessToken) // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
+            startActivity(intent)
+        } else {
+            Log.e(TAG, "Image Capture Failed")
+        }
+    }
+
+    // Init the Android 13 photo picker launcher & callback
+    private val selectImageLauncher = registerForActivityResult(
+        ActivityResultContracts.PickVisualMedia()
+    ) { selectedImageUri ->
+        selectedImageUri?.let {
+            Log.d(TAG, "SelectMedia Successful - Uri: $selectedImageUri")
+            // TODO: Send the Uri to the RecognitionResult activity and do work
+            val intent = Intent(this, RecognitionResult::class.java)
+            intent.putExtra("PHOTO_URI", selectedImageUri.toString())
+            intent.putExtra("ACCESS_TOKEN", accessToken) // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
+            startActivity(intent)
+        } ?: run {
+            Log.e(TAG, "SelectMedia: Failed to retrieve Uri")
+        }
+    }
+
 
     @SuppressLint("SimpleDateFormat")
     private fun loadUserInfo() {
@@ -284,3 +294,4 @@ class HomePage : AppCompatActivity() {
         infoText.text = "${consumed.toInt()}$unit\n${(percentage * 100).toInt()}%"
     }
 }
+

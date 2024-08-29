@@ -22,6 +22,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.credentials.CredentialManager
+import androidx.credentials.CredentialOption
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialException
 import androidx.security.crypto.EncryptedSharedPreferences
@@ -134,14 +135,14 @@ class LoginActivity : AppCompatActivity() {
 
                 // Make request to backend and retrieve user info
                 getUser(accessToken) { userExists ->
-                    if (userExists) {
-                        // User exists -> Move to home page
+                    if (userExists) { // User exists -> Move to home page
                         runOnUiThread {
                             Toast.makeText(this, "Welcome back to Diet Advisor!", Toast.LENGTH_SHORT).show()
-                            startActivity(Intent(this, HomePage::class.java))
+                            val intent = Intent(this, HomePage::class.java)
+                            intent.putExtra("ACCESS_TOKEN", accessToken) // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
+                            startActivity(intent)
                         }
-                    } else {
-                        // User doesn't exist -> Move to sign up screen
+                    } else { // User doesn't exist -> Move to sign up screen
                         runOnUiThread {
                             Log.d(TAG, "handleAuthorizationResult: Creating User Now")
                             Toast.makeText(this, "Please create an account!", Toast.LENGTH_SHORT).show()
@@ -290,7 +291,7 @@ class LoginActivity : AppCompatActivity() {
         Backend must be modified to allow for best practice normal and silent sign in methods
         (uses Google ID Token & Credential Manager)
         Until then, the current sign in flow is using the dialog window to confirm your account
-     */
+    */
     private suspend fun performSignIn() {
         // Create local instance of credential manager
         val credentialManager = CredentialManager.create(this)

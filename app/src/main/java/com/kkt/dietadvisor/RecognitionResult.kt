@@ -29,22 +29,25 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONArray
-import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
-import java.io.InputStream
+import java.util.concurrent.TimeUnit
 
 data class FoodItem(var name: String, val index: Int)
 
 class RecognitionResult : AppCompatActivity() {
 
     private lateinit var foodItems : List<FoodItem>
+    private lateinit var uriString: String
+    private lateinit var accessToken: String
 
     private val client: OkHttpClient by lazy {
         val logging = HttpLoggingInterceptor()
         logging.setLevel(HttpLoggingInterceptor.Level.BODY)
         OkHttpClient.Builder()
-            .addInterceptor(logging)
+//            .addInterceptor(logging)
+            .connectTimeout(30, TimeUnit.SECONDS) // Change response timeout to 1 seconds
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
             .build()
     }
 
@@ -64,16 +67,21 @@ class RecognitionResult : AppCompatActivity() {
             Main work flow:
             /yolo -> {DET.json} -> /calorie -> /user [PUT] (Update)
         */
-
         // Retrieve the Photo Uri from the intent extras (as a string)
-        val uriString = intent.getStringExtra("PHOTO_URI")
+        uriString = intent.getStringExtra("PHOTO_URI")
             ?: throw IllegalArgumentException("Photo Uri is missing from the intent")
+
+        // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
+        // Retrieve access token from the intent extras
+        accessToken = intent.getStringExtra("ACCESS_TOKEN")
+            ?: throw IllegalArgumentException("Access token is missing from the intent")
+        Log.d(TAG, "onCreate: Access Token Retrieved: $accessToken")
 
         // Convert back to Uri from string
         val photoUri = uriString.let { Uri.parse(it) }
         Log.d(TAG, "onCreate: Photo Uri Retrieved: $photoUri")
 
-        /* TESTING ONLY: Load retrieved Uri into image view */
+        // Load retrieved Uri into image view
         val resultImageView = findViewById<ImageView>(R.id.result_image)
         photoUri.let {
             Glide.with(this)
@@ -83,7 +91,7 @@ class RecognitionResult : AppCompatActivity() {
 
         /*
         TODO:
-            Send request to /yolo endpoint, retrieve image and preliminary recognition
+            Send [POST] request to /yolo endpoint, retrieve preliminary recognition values
             then load into image view and continue with confirmation workflow
         */
         val requestBody = contentResolver.openInputStream(photoUri)?.use { inputStream ->
@@ -110,7 +118,6 @@ class RecognitionResult : AppCompatActivity() {
             request.let {
                 client.newCall(it).enqueue(object : Callback {
                     override fun onFailure(call: Call, e: IOException) {
-                        // Handle the failure
                         Log.e(TAG, "onFailure: Request Failed: ${e.message}", )
                         e.printStackTrace()
                     }
@@ -123,18 +130,16 @@ class RecognitionResult : AppCompatActivity() {
                                 Log.d(TAG, "onResponse: Viewing JSON Response")
                                 println(jsonResponse)
 
-                                // Parse response body as json object
-
+                                // Populate food items list
                                 foodItems = loadFoodItems(jsonData = jsonResponse)
                                 println("Food items count: ${foodItems.size}")
 
                                 // Init UI with loaded food items
                                 runOnUiThread {
-                                    initUI()
+                                    initUI(jsonData = jsonResponse)
                                 }
                             }
                         } else {
-                            // Handle the error
                             Log.e(TAG, "onResponse: Request Failed: ${response.message}", )
                         }
                     }
@@ -145,7 +150,7 @@ class RecognitionResult : AppCompatActivity() {
     }
 
     // Called after the foodItems list has been populated after receiving the network response
-    private fun initUI() {
+    private fun initUI(jsonData: String) {
         val tableLayout = findViewById<TableLayout>(R.id.recognized_food_items)
 
         for ((index, food) in foodItems.withIndex()) {
@@ -202,8 +207,15 @@ class RecognitionResult : AppCompatActivity() {
             startActivity(Intent(this, HomePage::class.java))
         }
         confirmButton.setOnClickListener {
-            updateJsonFile(foodItems)
-            startActivity(Intent(this, AnalysisResult::class.java))
+            // Update JSON data
+            val updatedJsonData = updateJsonData(foodItems, jsonData)
+
+            //  Send to the AnalysisResult activity
+            val intent = Intent(this, AnalysisResult::class.java)
+            intent.putExtra("UPDATED_JSON_DATA", updatedJsonData)
+            intent.putExtra("PHOTO_URI", uriString)
+            intent.putExtra("ACCESS_TOKEN", accessToken)
+            startActivity(intent)
         }
     }
 
@@ -238,23 +250,19 @@ class RecognitionResult : AppCompatActivity() {
             .show()
     }
 
-    private fun updateJsonFile(foodItems: List<FoodItem>) {
-        try {
-            val file = File(filesDir, "recognizedFoodItems.json")
-            val inputStream: InputStream = assets.open("recognizedFoodItems.json")
-            val jsonString = inputStream.bufferedReader().use { it.readText() }
-            val jsonArray = JSONArray(jsonString)
+    private fun updateJsonData(foodItems: List<FoodItem>, jsonData: String): String {
+        return try {
+            val jsonArray = JSONArray(jsonData)
 
             for (foodItem in foodItems) {
                 val jsonObject = jsonArray.getJSONObject(foodItem.index)
                 jsonObject.put("name", foodItem.name)
             }
 
-            val outputStream = FileOutputStream(file)
-            outputStream.write(jsonArray.toString().toByteArray())
-            outputStream.close()
+            jsonArray.toString() // Return updated JSON string
         } catch (e: Exception) {
             e.printStackTrace()
+            jsonData // Return original JSON String in case of error
         }
     }
 }

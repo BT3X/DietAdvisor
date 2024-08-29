@@ -89,5 +89,6 @@
     <string name="WEB_CLIENT_ID" translatable="false">908769963821-nfcfmbdtifcc0s1ta3secu4hppq1hra7.apps.googleusercontent.com</string>
     <string name="DIET_ADVISOR_USER_ENDPOINT_URL" translatable="false">https://diet.kencs.net/user</string>
     <string name="DIET_ADVISOR_YOLO_ENDPOINT_URL" translatable="false">https://diet.kencs.net/yolo</string>
+    <string name="DIET_ADVISOR_CALORIE_ENDPOINT_URL">https://diet.kencs.net/calorie</string>
 
 </resources>

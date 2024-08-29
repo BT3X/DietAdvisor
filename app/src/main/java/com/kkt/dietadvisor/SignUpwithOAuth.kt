@@ -130,9 +130,10 @@ class SignUpwithOAuth : AppCompatActivity() {
                     val dietaryGoalAmount = 0.0
                     val TMR = 0.0
                     val TDEE = 0.0
-                    val carb = 0
-                    val protein = 0
-                    val fat = 0
+                    val carb = 0.0
+                    val protein = 0.0
+                    val fat = 0.0
+                    val calorie = 0.0
 
                     // Build the UserData object
                     val userData = UserData(
@@ -159,6 +160,7 @@ class SignUpwithOAuth : AppCompatActivity() {
                             carb = carb,
                             protein = protein,
                             fat = fat,
+                            calorie = calorie,
                         )
                     )
 
@@ -169,7 +171,10 @@ class SignUpwithOAuth : AppCompatActivity() {
                                 Log.d(TAG, "onUserInfoRetrieved: User Created Successfully!")
                                 Toast.makeText(this@SignUpwithOAuth, "User Created Successfully!", Toast.LENGTH_SHORT).show()
                                 Toast.makeText(this@SignUpwithOAuth, "Welcome to Diet Advisor!", Toast.LENGTH_SHORT).show()
-                                startActivity(Intent(this@SignUpwithOAuth, HomePage::class.java))
+
+                                val intent = Intent(this@SignUpwithOAuth, HomePage::class.java)
+                                intent.putExtra("ACCESS_TOKEN", accessToken) // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
+                                startActivity(intent)
                             }
                         } else {
                             runOnUiThread {

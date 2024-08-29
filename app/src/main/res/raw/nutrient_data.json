@@ -1,0 +1,157 @@
+{
+    "Kabayaki sea bream fillet": {
+        "serving_size": 100,
+        "energy": 327.6,
+        "fat": 28.8,
+        "carbohydrates": 3.1,
+        "protein": 18.5
+    },
+    "Spam": {
+        "serving_size": 100,
+        "energy": 321,
+        "fat": 28.6,
+        "carbohydrates": 1.8,
+        "protein": 12.5
+    },
+    "apple -sliced-": {
+        "serving_size": 100,
+        "energy": 52,
+        "fat": 0.13,
+        "carbohydrates": 13.81,
+        "protein": 0.26
+    },
+    "cabbage": {
+        "serving_size": 100,
+        "energy": 42,
+        "fat": 2.79,
+        "carbohydrates": 4.36,
+        "protein": 0.99
+    },
+    "creamy tofu": {
+        "serving_size": 100,
+        "energy": 209,
+        "fat": 13.8,
+        "carbohydrates": 8.6,
+        "protein": 13.6
+    },
+    "creamy tofu -without sauce-": {
+        "serving_size": 100,
+        "energy": 196,
+        "fat": 13.4,
+        "carbohydrates": 6.3,
+        "protein": 13.4
+    },
+    "cucumber": {
+        "serving_size": 100,
+        "energy": 15,
+        "fat": 0.11,
+        "carbohydrates": 3.63,
+        "protein": 0.65
+    },
+    "egg tofu": {
+        "serving_size": 100,
+        "energy": 160,
+        "fat": 13.3,
+        "carbohydrates": 0.8,
+        "protein": 12.7
+    },
+    "firm tofu": {
+        "serving_size": 100,
+        "energy": 161,
+        "fat": 8.6,
+        "carbohydrates": 3.5,
+        "protein": 17.4
+    },
+    "fish cake": {
+        "serving_size": 100,
+        "energy": 206.2,
+        "fat": 6.8,
+        "carbohydrates": 13.9,
+        "protein": 2.4
+    },
+    "fried chicken cutlet": {
+        "serving_size": 100,
+        "energy": 297,
+        "fat": 18.82,
+        "carbohydrates": 16.32,
+        "protein": 15.59
+    },
+    "fried potato": {
+        "serving_size": 100,
+        "energy": 307,
+        "fat": 14.8,
+        "carbohydrates": 40.9,
+        "protein": 3.4
+    },
+    "grilled pork": {
+        "serving_size": 100,
+        "energy": 293,
+        "fat": 21.4,
+        "carbohydrates": 0,
+        "protein": 25.1
+    },
+    "guava -sliced-": {
+        "serving_size": 100,
+        "energy": 68,
+        "fat": 0.95,
+        "carbohydrates": 14.32,
+        "protein": 2.55
+    },
+    "mustard greens": {
+        "serving_size": 100,
+        "energy": 37,
+        "fat": 2.77,
+        "carbohydrates": 2.08,
+        "protein": 2.18
+    },
+    "pig blood curd": {
+        "serving_size": 100,
+        "energy": 55,
+        "fat": 12.2,
+        "carbohydrates": 0.3,
+        "protein": 0.9
+    },
+    "pig liver": {
+        "serving_size": 100,
+        "energy": 134,
+        "fat": 21.39,
+        "carbohydrates": 3.65,
+        "protein": 2.47
+    },
+    "pineapple": {
+        "serving_size": 100,
+        "energy": 48,
+        "fat": 0.54,
+        "carbohydrates": 0.12,
+        "protein": 12.63
+    },
+    "pumpkin": {
+        "serving_size": 100,
+        "energy": 46,
+        "fat": 1.08,
+        "carbohydrates": 1.75,
+        "protein": 7.94
+    },
+    "red grilled pork": {
+        "serving_size": 100,
+        "energy": 221,
+        "fat": 10.2,
+        "carbohydrates": 10.6,
+        "protein": 12.5
+    },
+    "soy egg": {
+        "serving_size": 100,
+        "energy": 149.2,
+        "fat": 8.75,
+        "carbohydrates": 6.66,
+        "protein": 11.1
+    },
+    "sweet potato leaves": {
+        "serving_size": 100,
+        "energy": 35,
+        "fat": 0.3,
+        "carbohydrates": 6.38,
+        "protein": 4
+    }
+}
+
