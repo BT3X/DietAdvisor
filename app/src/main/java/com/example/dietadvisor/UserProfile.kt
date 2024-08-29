@@ -127,22 +127,37 @@ class UserProfile : AppCompatActivity() {
             val inputStream: InputStream = assets.open("userInfo.json")
             val jsonString = inputStream.bufferedReader().use { it.readText() }
             val jsonObject = JSONObject(jsonString)
-            val jsonArray = jsonObject.getJSONArray("Intake")
 
+            val personalInfo = jsonObject.getJSONObject("personalInfo")
+            val bodyMeasurements = jsonObject.getJSONObject("bodyMeasurements")
+            val dietaryInfo = jsonObject.getJSONObject("dietaryInfo")
 
-            findViewById<TextView>(R.id.username).text = jsonObject.getString("Username")
-            findViewById<TextView>(R.id.dob).text = jsonObject.getString("Date of Birth")
-            findViewById<TextView>(R.id.gender).text = jsonObject.getString("Gender")
-            findViewById<TextView>(R.id.height).text = jsonObject.getString("Height")
-            findViewById<TextView>(R.id.weight).text = jsonObject.getString("Weight")
-            findViewById<TextView>(R.id.diet_goal).text = jsonObject.getString("Dietary Goal")
-            findViewById<TextView>(R.id.activity_level).text = jsonObject.getString("Activity Level")
-            findViewById<TextView>(R.id.language).text = jsonObject.getString("Language")
+            // Set the user info fields
+            findViewById<TextView>(R.id.username).text = personalInfo.getString("userName")
+            findViewById<TextView>(R.id.dob).text = personalInfo.getString("birthDate")
+            findViewById<TextView>(R.id.gender).text = personalInfo.getString("gender")
+            findViewById<TextView>(R.id.height).text = bodyMeasurements.getInt("height").toString()
+            findViewById<TextView>(R.id.weight).text = bodyMeasurements.getInt("weight").toString()
+            findViewById<TextView>(R.id.diet_goal).text = dietaryInfo.getString("dietaryGoal")
+            findViewById<TextView>(R.id.activity_level).text = mapActivityLevelToString(bodyMeasurements.getInt("physicalActivity"))
+            findViewById<TextView>(R.id.language).text = personalInfo.getString("language")
 
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
+
+    private fun mapActivityLevelToString(activityLevel: Int): String {
+        return when (activityLevel) {
+            0 -> "Sedentary"
+            1 -> "Lightly Active"
+            2 -> "Moderately Active"
+            3 -> "Very Active"
+            4 -> "Extra Active"
+            else -> "Unknown"
+        }
+    }
+
 
     // Dialog methods for editing information
     private fun showEditTextDialog(title: String, currentValue: String, callback: (String) -> Unit) {

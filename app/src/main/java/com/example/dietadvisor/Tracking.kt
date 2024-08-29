@@ -68,7 +68,7 @@ class Tracking : AppCompatActivity() {
                 val startDateString = dateFormatter.format(Date(startDate))
                 val endDateString = dateFormatter.format(Date(endDate))
 
-                Toast.makeText(this, resources.getString(R.string.select_date_range)+"$startDateString " + resources.getString(R.string.to) + " $endDateString", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "${resources.getString(R.string.select_date_range)} $startDateString ${resources.getString(R.string.to)} $endDateString", Toast.LENGTH_LONG).show()
 
                 // Load and filter the user data based on the selected date range
                 intakeData = loadUserInfo(startDateString, endDateString)
@@ -76,7 +76,7 @@ class Tracking : AppCompatActivity() {
             }
 
             datePicker.addOnNegativeButtonClickListener {
-                Toast.makeText(this, "${datePicker.headerText} "+resources.getString(R.string.is_cancelled), Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "${datePicker.headerText} ${resources.getString(R.string.is_cancelled)}", Toast.LENGTH_LONG).show()
             }
 
             datePicker.addOnCancelListener {
@@ -117,7 +117,7 @@ class Tracking : AppCompatActivity() {
             val inputStream: InputStream = assets.open("userInfo.json")
             val jsonString = inputStream.bufferedReader().use { it.readText() }
             val jsonObject = JSONObject(jsonString)
-            val intakeArray = jsonObject.getJSONArray("Intake")
+            val intakeArray = jsonObject.getJSONArray("intakeHistory")
 
             val dateFormatter = SimpleDateFormat("yyyy-MM-dd")
             val start = dateFormatter.parse(startDate) ?: Date()
@@ -127,13 +127,14 @@ class Tracking : AppCompatActivity() {
             val intakeMap = mutableMapOf<String, IntakeData>()
             for (i in 0 until intakeArray.length()) {
                 val intakeObject = intakeArray.getJSONObject(i)
-                val intakeDate = intakeObject.getString("Date")
+                val intakeDate = intakeObject.getString("date")
+                val nutritionalInfo = intakeObject.getJSONObject("nutritionalInfo")
                 intakeMap[intakeDate] = IntakeData(
                     date = intakeDate,
-                    calorie = intakeObject.getDouble("Calorie").toFloat(),
-                    protein = intakeObject.getDouble("Protein").toFloat(),
-                    carb = intakeObject.getDouble("Carb").toFloat(),
-                    fat = intakeObject.getDouble("Fat").toFloat()
+                    calorie = nutritionalInfo.getDouble("carb").toFloat() * 4 + nutritionalInfo.getDouble("protein").toFloat() * 4 + nutritionalInfo.getDouble("fat").toFloat() * 9,
+                    protein = nutritionalInfo.getDouble("protein").toFloat(),
+                    carb = nutritionalInfo.getDouble("carb").toFloat(),
+                    fat = nutritionalInfo.getDouble("fat").toFloat()
                 )
             }
 
@@ -218,8 +219,7 @@ class Tracking : AppCompatActivity() {
         }
 
         if (activeDataSets.isEmpty()) {
-            barChart.clear() // Clear the chart
-//            barChart.setNoDataText("No data available. Please select at least one nutrient category.")
+            barChart.clear() // Clear the chart if no datasets are active
             barChart.invalidate()
             return
         }
@@ -233,13 +233,12 @@ class Tracking : AppCompatActivity() {
             xAxis.valueFormatter = IndexAxisValueFormatter(labels)
 
             xAxis.labelCount = labels.size
-            if (activeDataSets.size>1){
+            if (activeDataSets.size > 1) {
                 xAxis.setCenterAxisLabels(true)
                 groupBars(0f, groupSpace, barSpace)
                 xAxis.axisMinimum = 0f
                 xAxis.axisMaximum = barChart.data.getGroupWidth(groupSpace, barSpace) * labels.size
-            }
-            else {
+            } else {
                 xAxis.setCenterAxisLabels(false)
                 xAxis.axisMinimum = -0.5f
                 xAxis.axisMaximum = labels.size + 0f

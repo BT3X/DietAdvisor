@@ -4,10 +4,13 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.icu.util.Calendar
 import android.os.Bundle
+import android.view.Gravity
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -37,10 +40,45 @@ class HomePage : AppCompatActivity() {
         val cameraButton = findViewById<LinearLayout>(R.id.camera_button)
 
         uploadButton.setOnClickListener {
-            startActivity(Intent(this, RecognitionResult::class.java))
+            val dialogView = layoutInflater.inflate(R.layout.progressbar_dialog, null)
+
+            val dialog = AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setCancelable(false)
+                .create()
+            dialog.show()
+            dialog.window?.setGravity(Gravity.CENTER)
+
+            val isSuccessful = true
+
+            dialogView.postDelayed({
+                dialog.dismiss()
+                if (isSuccessful) startActivity(Intent(this, RecognitionResult::class.java))
+                else {
+                    Toast.makeText(this, resources.getString(R.string.error_message), Toast.LENGTH_LONG).show()
+                }
+            }, 1000)
         }
+
         cameraButton.setOnClickListener {
-            startActivity(Intent(this, RecognitionResult::class.java))
+            val dialogView = layoutInflater.inflate(R.layout.progressbar_dialog, null)
+
+            val dialog = AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setCancelable(false)
+                .create()
+            dialog.show()
+            dialog.window?.setGravity(Gravity.CENTER)
+
+            val isSuccessful = false
+
+            dialogView.postDelayed({
+                dialog.dismiss()
+                if (isSuccessful) startActivity(Intent(this, RecognitionResult::class.java))
+                else {
+                    Toast.makeText(this, resources.getString(R.string.error_message), Toast.LENGTH_LONG).show()
+                }
+            }, 1000)
         }
         trackingButton.setOnClickListener {
             startActivity(Intent(this, Tracking::class.java))
@@ -61,27 +99,18 @@ class HomePage : AppCompatActivity() {
             val inputStream: InputStream = assets.open("userInfo.json")
             val jsonString = inputStream.bufferedReader().use { it.readText() }
             val jsonObject = JSONObject(jsonString)
-            val jsonArray = jsonObject.getJSONArray("Intake")
+
+            val intakeHistory = jsonObject.getJSONArray("intakeHistory")
 
             val dateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-
             val c: Date = Calendar.getInstance().time
             val todayDate = dateFormatter.format(c)
 
-            // User Information
-            val dob = jsonObject.getString("Date of Birth")
-            val gender = jsonObject.getString("Gender")
-            val height = jsonObject.getInt("Height")
-            val weight = jsonObject.getInt("Weight")
-            val dietGoal = jsonObject.getString("Dietary Goal")
-            val activityLevel = jsonObject.getString("Activity Level")
-
-            // Calculate Daily Requirements
-            val age = getAgeFromDOB(dob)
-            val dailyCalories = calculateDailyCalories(gender, age, height, weight, dietGoal, activityLevel)
-            val dailyProtein = calculateDailyProtein(weight)
-            val dailyCarbs = calculateDailyCarbs(dailyCalories)
-            val dailyFat = calculateDailyFat(dailyCalories)
+            // Retrieve user-specific information
+            val dailyCalories = jsonObject.getJSONObject("dietaryInfo").getDouble("TDEE").toFloat()
+            val dailyProtein = calculateDailyProtein(jsonObject.getJSONObject("bodyMeasurements").getInt("weight"))
+            val dailyCarbs = (dailyCalories * 0.5f) / 4f // 50% of calories from carbs, 4 calories per gram of carbs
+            val dailyFat = (dailyCalories * 0.3f) / 9f // 30% of calories from fat, 9 calories per gram of fat
 
             // Load Today's Intake
             var todayCalories = 0f
@@ -89,13 +118,15 @@ class HomePage : AppCompatActivity() {
             var todayCarbs = 0f
             var todayFat = 0f
 
-            for (i in 0 until jsonArray.length()) {
-                val intakeObject = jsonArray.getJSONObject(i)
-                if (intakeObject.getString("Date") == todayDate) {
-                    todayCalories = intakeObject.getDouble("Calorie").toFloat()
-                    todayProtein = intakeObject.getDouble("Protein").toFloat()
-                    todayCarbs = intakeObject.getDouble("Carb").toFloat()
-                    todayFat = intakeObject.getDouble("Fat").toFloat()
+            for (i in 0 until intakeHistory.length()) {
+                val intakeObject = intakeHistory.getJSONObject(i)
+                if (intakeObject.getString("date") == todayDate) {
+                    todayCalories = intakeObject.getJSONObject("nutritionalInfo").getDouble("carb").toFloat() * 4 +
+                            intakeObject.getJSONObject("nutritionalInfo").getDouble("protein").toFloat() * 4 +
+                            intakeObject.getJSONObject("nutritionalInfo").getDouble("fat").toFloat() * 9
+                    todayProtein = intakeObject.getJSONObject("nutritionalInfo").getDouble("protein").toFloat()
+                    todayCarbs = intakeObject.getJSONObject("nutritionalInfo").getDouble("carb").toFloat()
+                    todayFat = intakeObject.getJSONObject("nutritionalInfo").getDouble("fat").toFloat()
                     break
                 }
             }
@@ -123,64 +154,8 @@ class HomePage : AppCompatActivity() {
         }
     }
 
-    private fun getAgeFromDOB(dob: String): Int {
-        val dobFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val birthDate = dobFormatter.parse(dob)
-        val today = Calendar.getInstance()
-
-        val birthCalendar = Calendar.getInstance()
-        birthCalendar.time = birthDate!!
-
-        var age = today.get(Calendar.YEAR) - birthCalendar.get(Calendar.YEAR)
-        if (today.get(Calendar.DAY_OF_YEAR) < birthCalendar.get(Calendar.DAY_OF_YEAR)) {
-            age--
-        }
-        return age
-    }
-
-    private fun calculateDailyCalories(
-        gender: String,
-        age: Int,
-        height: Int,
-        weight: Int,
-        dietGoal: String,
-        activityLevel: String
-    ): Float {
-        val bmr: Float = when (gender.lowercase(Locale.getDefault())) {
-            "male" -> 10f * weight + 6.25f * height - 5f * age + 5f
-            "female" -> 10f * weight + 6.25f * height - 5f * age - 161f
-            else -> (10f * weight + 6.25f * height - 5f * age - 161f + 10f * weight + 6.25f * height - 5f * age + 5f) / 2f
-        }
-
-        // Activity level adjustment
-        val activityMultiplier = when (activityLevel.lowercase(Locale.getDefault())) {
-            "sedentary" -> 1.2f
-            "lightly active" -> 1.375f
-            "moderately active" -> 1.55f
-            "very active" -> 1.725f
-            "extra active" -> 1.9f
-            else -> 1.2f // Default to sedentary if no valid activity level is provided
-        }
-
-        val calorieAdjustment = when (dietGoal.lowercase(Locale.getDefault())) {
-            "lose weight" -> -500f
-            "gain weight" -> 500f
-            else -> 0f
-        }
-
-        return bmr * activityMultiplier + calorieAdjustment
-    }
-
     private fun calculateDailyProtein(weight: Int): Float {
         return 1.6f * weight // 1.6g protein per kg body weight
-    }
-
-    private fun calculateDailyCarbs(dailyCalories: Float): Float {
-        return (dailyCalories * 0.5f) / 4f // 50% of calories from carbs, 4 calories per gram of carbs
-    }
-
-    private fun calculateDailyFat(dailyCalories: Float): Float {
-        return (dailyCalories * 0.3f) / 9f // 30% of calories from fat, 9 calories per gram of fat
     }
 
     private fun updatePieChart(pieChartId: Int, infoTextId: Int, consumed: Float, daily: Float, unit: String) {
