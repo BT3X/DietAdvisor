@@ -11,6 +11,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import io.noties.markwon.Markwon
+import io.noties.markwon.SoftBreakAddsNewLinePlugin
+import io.noties.markwon.image.ImagesPlugin
+import io.noties.markwon.image.network.NetworkSchemeHandler
+import io.noties.markwon.syntax.Prism4jThemeDefault
+import io.noties.markwon.syntax.SyntaxHighlightPlugin
+import io.noties.prism4j.Prism4j
+import io.noties.prism4j.annotations.PrismBundle
 
 class Recommendations : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,10 +34,25 @@ class Recommendations : AppCompatActivity() {
         val recommendationRequest = findViewById<Button>(R.id.request_recommendations)
         val recommendationText = findViewById<TextView>(R.id.recommendations_text)
         val recommendationSV = findViewById<ScrollView>(R.id.recommendations_scroll_view)
-        recommendationText.text = resources.getString(R.string.random_text)
+//        recommendationText.text = resources.getString(R.string.markdown_text)
         recommendationRequest.setOnClickListener {
             recommendationSV.visibility = View.VISIBLE
         }
+
+        val prism4j = Prism4j(ExampleGrammarLocator())
+        val syntaxHighlightPlugin = SyntaxHighlightPlugin.create(prism4j, Prism4jThemeDefault.create())
+
+        val imagesPlugin = ImagesPlugin.create { plugin ->
+            plugin.addSchemeHandler(NetworkSchemeHandler.create())
+        }
+        // Configure Markwon
+        val markwon = Markwon.builder(this)
+            .usePlugin(imagesPlugin)
+            .usePlugin(syntaxHighlightPlugin)
+            .usePlugin(SoftBreakAddsNewLinePlugin.create())
+            .build()
+
+        markwon.setMarkdown(recommendationText, resources.getString(R.string.markdown_text))
 
         val homepageButton = findViewById<FrameLayout>(R.id.home_button)
         val trackingButton = findViewById<FrameLayout>(R.id.tracking_button)
@@ -45,3 +68,7 @@ class Recommendations : AppCompatActivity() {
         }
     }
 }
+
+@PrismBundle(include = ["kotlin", "java"],
+    grammarLocatorClassName = ".ExampleGrammarLocator")
+class GrammarLocator { }

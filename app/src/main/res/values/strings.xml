@@ -133,6 +133,25 @@
     <string name="try_again">Try Again</string>
     <string name="error_message">An error occurred. Please try again!</string>
 
+    <string name="markdown_text">
+    <![CDATA[
+# Simple Markdown Title\
+\
+This is a simple markdown paragraph.\
+\
+- List item 1\
+- List item 2\
+\
+**Bold Text** and *Italic Text*.\
+\
+\
+\
+![Image](https://ichef.bbci.co.uk/images/ic/720x405/p0517py6.jpg)
+    ]]>
+</string>
+
+
+
 
 
 </resources>
