@@ -1,15 +1,19 @@
 package com.example.dietadvisor
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.UnderlineSpan
+import android.view.Gravity
 import android.widget.Button
 import android.widget.TableLayout
 import android.widget.TableRow
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
@@ -23,6 +27,7 @@ import java.io.InputStream
 data class FoodItem(var name: String, val index: Int)
 
 class RecognitionResult : AppCompatActivity() {
+    @SuppressLint("InflateParams")
     override fun onCreate(savedInstanceState: Bundle?) {
         supportActionBar?.hide()
         super.onCreate(savedInstanceState)
@@ -91,12 +96,33 @@ class RecognitionResult : AppCompatActivity() {
 
         val cancelButton = findViewById<Button>(R.id.cancel_button)
         val confirmButton = findViewById<Button>(R.id.confirm_button)
+
+
         cancelButton.setOnClickListener {
             startActivity(Intent(this, HomePage::class.java))
         }
         confirmButton.setOnClickListener {
             updateJsonFile(foodItems)
-            startActivity(Intent(this, AnalysisResult::class.java))
+            val dialogView = layoutInflater.inflate(R.layout.progressbar_dialog, null)
+
+            val dialog = AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setCancelable(false)
+                .create()
+            dialog.show()
+            dialog.window?.setGravity(Gravity.CENTER)
+
+            val isSuccessful = false;
+
+            dialogView.postDelayed({
+                dialog.dismiss()
+                if (isSuccessful) startActivity(Intent(this, AnalysisResult::class.java))
+                else {
+                    Toast.makeText(this, resources.getString(R.string.error_message), Toast.LENGTH_LONG).show()
+                    confirmButton.text = resources.getString(R.string.try_again)
+                    confirmButton.setBackgroundResource(R.drawable.try_again_button)
+                }
+            }, 3000)
         }
     }
 

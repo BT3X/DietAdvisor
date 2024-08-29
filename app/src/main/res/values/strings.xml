@@ -129,6 +129,9 @@
         <item>Super active</item>
     </string-array>
     <string name="select_activity_level">Select Activity Level</string>
+    <string name="loading_message">Processing… Please wait!</string>
+    <string name="try_again">Try Again</string>
+    <string name="error_message">An error occurred. Please try again!</string>
 
 
 

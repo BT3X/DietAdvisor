@@ -9,5 +9,5 @@
     <color name="greenButton">#949D81</color>
     <color name="greenButtonStroke">#6F8D6D</color>
     <color name="grayTextInTextView">#4D000000</color>
-
+    <color name="tryAgainButton">#9C6763</color>
 </resources>

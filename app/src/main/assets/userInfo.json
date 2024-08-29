@@ -4,7 +4,7 @@
   "Gender": "Female",
   "Height": "154",
   "Weight": "45",
-  "Dietary Goal": "Stay the same",
+  "Dietary Goal": "Stay the Same",
   "Activity Level": "Moderately active",
   "Language": "English",
   "Intake": [
@@ -80,7 +80,7 @@
     },
     {
       "Date": "2024-08-23",
-      "Calorie": 2000,
+      "Calorie": 1500,
       "Protein": 45,
       "Carb": 207.5,
       "Fat": 40
