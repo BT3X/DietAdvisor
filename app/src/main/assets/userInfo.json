@@ -12,7 +12,7 @@
     "physicalActivity": 1
   },
   "dietaryInfo": {
-    "dietaryGoal": "Gain weight",
+    "dietaryGoal": "Gain Weight",
     "dietaryGoalAmount": 500,
     "TMR": 1650,
     "TDEE": 2550
@@ -23,7 +23,8 @@
       "nutritionalInfo": {
         "carb": 200,
         "protein": 100,
-        "fat": 70
+        "fat": 70,
+        "calorie": 2100
       }
     },
     {
@@ -31,7 +32,8 @@
       "nutritionalInfo": {
         "carb": 220,
         "protein": 110,
-        "fat": 75
+        "fat": 75,
+        "calorie": 2300
       }
     },
     {
@@ -39,7 +41,8 @@
       "nutritionalInfo": {
         "carb": 210,
         "protein": 105,
-        "fat": 72
+        "fat": 72,
+        "calorie": 2200
       }
     },
     {
@@ -47,7 +50,8 @@
       "nutritionalInfo": {
         "carb": 230,
         "protein": 115,
-        "fat": 78
+        "fat": 78,
+        "calorie": 2400
       }
     },
     {
@@ -55,7 +59,8 @@
       "nutritionalInfo": {
         "carb": 225,
         "protein": 112,
-        "fat": 76
+        "fat": 76,
+        "calorie": 2350
       }
     },
     {
@@ -63,7 +68,8 @@
       "nutritionalInfo": {
         "carb": 215,
         "protein": 108,
-        "fat": 73
+        "fat": 73,
+        "calorie": 2250
       }
     },
     {
@@ -71,7 +77,8 @@
       "nutritionalInfo": {
         "carb": 205,
         "protein": 102,
-        "fat": 70
+        "fat": 70,
+        "calorie": 2150
       }
     },
     {
@@ -79,7 +86,8 @@
       "nutritionalInfo": {
         "carb": 220,
         "protein": 110,
-        "fat": 75
+        "fat": 75,
+        "calorie": 2300
       }
     },
     {
@@ -87,7 +95,8 @@
       "nutritionalInfo": {
         "carb": 210,
         "protein": 105,
-        "fat": 72
+        "fat": 72,
+        "calorie": 2200
       }
     },
     {
@@ -95,21 +104,24 @@
       "nutritionalInfo": {
         "carb": 230,
         "protein": 115,
-        "fat": 78
+        "fat": 78,
+        "calorie": 2400
       }
     },
     {
-      "date": "2024-08-29",
+      "date": "2024-08-31",
       "nutritionalInfo": {
         "carb": 200,
         "protein": 100,
-        "fat": 70
+        "fat": 70,
+        "calorie": 2100
       }
     }
   ],
   "lastMeal": {
     "carb": 60,
     "protein": 30,
-    "fat": 20
+    "fat": 20,
+    "calorie": 600
   }
 }

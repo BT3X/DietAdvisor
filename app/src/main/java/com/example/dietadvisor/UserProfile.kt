@@ -150,10 +150,10 @@ class UserProfile : AppCompatActivity() {
     private fun mapActivityLevelToString(activityLevel: Int): String {
         return when (activityLevel) {
             0 -> "Sedentary"
-            1 -> "Lightly Active"
-            2 -> "Moderately Active"
-            3 -> "Very Active"
-            4 -> "Extra Active"
+            1 -> "Lightly active"
+            2 -> "Moderately active"
+            3 -> "Very active"
+            4 -> "Extra active"
             else -> "Unknown"
         }
     }

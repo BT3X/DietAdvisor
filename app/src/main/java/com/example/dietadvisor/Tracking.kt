@@ -131,7 +131,7 @@ class Tracking : AppCompatActivity() {
                 val nutritionalInfo = intakeObject.getJSONObject("nutritionalInfo")
                 intakeMap[intakeDate] = IntakeData(
                     date = intakeDate,
-                    calorie = nutritionalInfo.getDouble("carb").toFloat() * 4 + nutritionalInfo.getDouble("protein").toFloat() * 4 + nutritionalInfo.getDouble("fat").toFloat() * 9,
+                    calorie = nutritionalInfo.getDouble("calorie").toFloat(),
                     protein = nutritionalInfo.getDouble("protein").toFloat(),
                     carb = nutritionalInfo.getDouble("carb").toFloat(),
                     fat = nutritionalInfo.getDouble("fat").toFloat()

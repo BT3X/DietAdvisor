@@ -77,6 +77,7 @@ class HomePage : AppCompatActivity() {
                 if (isSuccessful) startActivity(Intent(this, RecognitionResult::class.java))
                 else {
                     Toast.makeText(this, resources.getString(R.string.error_message), Toast.LENGTH_LONG).show()
+
                 }
             }, 1000)
         }
@@ -121,9 +122,7 @@ class HomePage : AppCompatActivity() {
             for (i in 0 until intakeHistory.length()) {
                 val intakeObject = intakeHistory.getJSONObject(i)
                 if (intakeObject.getString("date") == todayDate) {
-                    todayCalories = intakeObject.getJSONObject("nutritionalInfo").getDouble("carb").toFloat() * 4 +
-                            intakeObject.getJSONObject("nutritionalInfo").getDouble("protein").toFloat() * 4 +
-                            intakeObject.getJSONObject("nutritionalInfo").getDouble("fat").toFloat() * 9
+                    todayCalories = intakeObject.getJSONObject("nutritionalInfo").getDouble("calorie").toFloat()
                     todayProtein = intakeObject.getJSONObject("nutritionalInfo").getDouble("protein").toFloat()
                     todayCarbs = intakeObject.getJSONObject("nutritionalInfo").getDouble("carb").toFloat()
                     todayFat = intakeObject.getJSONObject("nutritionalInfo").getDouble("fat").toFloat()
