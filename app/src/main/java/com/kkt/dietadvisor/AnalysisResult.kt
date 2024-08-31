@@ -19,17 +19,14 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.kkt.dietadvisor.models.IntakeEntry
 import com.kkt.dietadvisor.models.NutritionalInfo
 import com.kkt.dietadvisor.models.UserData
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
@@ -83,12 +80,12 @@ class AnalysisResult : AppCompatActivity() {
         Log.d(TAG, "onCreate: Access Token Retrieved: $accessToken")
 
         // Retrieve the JSON data from the intent extras
-        val jsonData = intent.getStringExtra("UPDATED_JSON_DATA")
-            ?: throw IllegalArgumentException("JSON Data is missing from the intent")
+        val analysisResults = intent.getStringExtra("ANALYSIS_RESULTS")
+            ?: throw IllegalArgumentException("Analysis Data is missing from the intent")
 
         // Retrieve the Photo Uri from the intent extras (as a string)
-        val uriString = intent.getStringExtra("PHOTO_URI")
-            ?: throw IllegalArgumentException("Photo Uri is missing from the intent")
+        val uriString = intent.getStringExtra("URI_STRING")
+            ?: throw IllegalArgumentException("Uri string is missing from the intent")
 
         // Convert back to Uri from string
         val photoUri = uriString.let { Uri.parse(it) }
@@ -102,109 +99,12 @@ class AnalysisResult : AppCompatActivity() {
                 .into(resultImageView)
         }
 
-        /*
-        TODO:
-            Send [POST] request to /calorie endpoint, retrieve final nutritional values
-            then load into image view and continue with confirmation workflow
-        */
-        val requestBody = contentResolver.openInputStream(photoUri)?.use { inputStream ->
-            inputStream.readBytes().toRequestBody("image/jpeg".toMediaTypeOrNull())
-        }
+        // Populate food items list
+        foodItems = loadFoodItems(jsonData = analysisResults)
+        println("Food items count: ${foodItems.size}")
 
-        requestBody?.let {
-            val multipartBody = requestBody.let {
-                MultipartBody.Builder()
-                    .setType(MultipartBody.FORM)
-                    .addFormDataPart("image", "filename.jpg", it)
-                    .addFormDataPart("data", jsonData)
-                    .build()
-            }
-
-            val request = multipartBody.let {
-                Request.Builder()
-                    .url(getString(R.string.DIET_ADVISOR_CALORIE_ENDPOINT_URL))
-                    .post(it)
-                    .addHeader("accept", "text/plain")
-                    .addHeader("Content-Type", "multipart/form-data")
-                    .build()
-            }
-
-            request.let {
-                client.newCall(it).enqueue(object : Callback {
-                    override fun onFailure(call: Call, e: IOException) {
-                        Log.e(TAG, "onFailure: Request Failed: ${e.message}", )
-                        e.printStackTrace()
-                    }
-
-                    override fun onResponse(call: Call, response: Response) {
-                        if (response.isSuccessful) {
-                            // Handle the successful response
-                            response.body?.let { responseBody ->
-                                val jsonResponse = responseBody.string()
-                                Log.d(TAG, "onResponse: Viewing JSON Response")
-                                println(jsonResponse)
-
-                                /* Perform nutrition quantity conversion */
-
-                                // Load nutrient_data.json from resources
-                                val inputStream = resources.openRawResource(R.raw.nutrient_data)
-                                val nutritionFactsJSON = inputStream.bufferedReader().use { reader -> reader.readText() }
-
-                                val gson = Gson()
-
-                                // Parse the nutrition data index and analyzed meal data from response
-                                val nutritionMap: Map<String, NutritionFacts> = gson.fromJson(
-                                    nutritionFactsJSON,
-                                    object: TypeToken<Map<String, NutritionFacts>>() {}.type
-                                )
-                                val analyzedFoodItems: List<AnalyzedFoodItem> = gson.fromJson(
-                                    jsonResponse,
-                                    object: TypeToken<List<AnalyzedFoodItem>>() {}.type
-                                )
-
-                                // Calculate nutrition values for each food item
-                                val finalizedNutritionData = analyzedFoodItems.mapNotNull { item ->
-                                    val nutritionFacts = nutritionMap[item.name]
-                                    nutritionFacts?.let {
-                                        Log.d(TAG, "Item mass for ${item.name}: ${item.mass}")
-                                        Log.d(TAG, "Serving size for ${item.name}: ${nutritionFacts.serving_size}")
-
-                                        val factor = item.mass / nutritionFacts.serving_size
-
-                                        Log.d(TAG, "Factor Calculated for ${item.name}: $factor")
-                                        
-                                        val calculatedNutritionData = CalculatedNutritionData(
-                                            calories = nutritionFacts.energy * factor,
-                                            carbohydrates = nutritionFacts.carbohydrates * factor,
-                                            protein = nutritionFacts.protein * factor,
-                                            fat = nutritionFacts.fat * factor
-                                        )
-
-                                        FinalizedNutritionData(name = item.name, nutrition = calculatedNutritionData)
-                                    }
-                                }
-
-                                // Convert result back to JSON
-                                val currentMealNutritionFacts = gson.toJson(finalizedNutritionData)
-                                Log.d(TAG, "onResponse: Current Meal Nutrition Facts Calculated!")
-                                println(currentMealNutritionFacts)
-
-                                // Populate food items list
-                                foodItems = loadFoodItems(jsonData = currentMealNutritionFacts)
-                                println("Food items count: ${foodItems.size}")
-
-                                // Init UI with loaded food items once the response is received
-                                runOnUiThread {
-                                    initUI()
-                                }
-                            }
-                        } else {
-                            Log.e(TAG, "onResponse: Request Failed: ${response.message}", )
-                        }
-                    }
-                })
-            }
-        }
+        // Initialize the rest of the UI as normal
+        initUI()
     }
 
     private fun initUI() {
@@ -351,7 +251,9 @@ class AnalysisResult : AppCompatActivity() {
 
             // TODO: Add callback so that intent is started only if the update is successful
             updateUserIntake(accessToken = accessToken, userIntake = totalIntake)
-            startActivity(Intent(this, Tracking::class.java))
+            val intent = Intent(this, Tracking::class.java)
+            intent.putExtra("ACCESS_TOKEN", accessToken)
+            startActivity(intent)
         }
     }
 
@@ -368,12 +270,35 @@ class AnalysisResult : AppCompatActivity() {
                     val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                     val currentDate = dateFormat.format(Date())
 
-                    // Create a new IntakeEntry with the current date and userIntake
-                    val newIntakeEntry = IntakeEntry(date = currentDate, nutritionalInfo = userIntake)
+                    // Initialize flag to track if today's entry exists
+                    var intakeUpdated = false
 
                     // Update intakeHistory with the new entry
                     val updatedIntakeHistory = userData.intakeHistory.toMutableList()
-                    updatedIntakeHistory.add(newIntakeEntry)
+
+                    // Iterate over the intake history to find today's entry and update it
+                    for (i in updatedIntakeHistory.indices) {
+                        val intakeEntry = updatedIntakeHistory[i]
+                        if (intakeEntry.date == currentDate) {
+                            // Update the nutritional information by adding the new values
+                            val updatedNutritionalInfo = NutritionalInfo(
+                                carb = intakeEntry.nutritionalInfo.carb + userIntake.carb,
+                                protein = intakeEntry.nutritionalInfo.protein + userIntake.protein,
+                                fat = intakeEntry.nutritionalInfo.fat + userIntake.fat,
+                                calorie = intakeEntry.nutritionalInfo.calorie + userIntake.calorie
+                            )
+                            // Replace the old entry with the updated one
+                            updatedIntakeHistory[i] = intakeEntry.copy(nutritionalInfo = updatedNutritionalInfo)
+                            intakeUpdated = true
+                            break
+                        }
+                    }
+
+                    // If today's entry was not found, add a new one
+                    if (!intakeUpdated) {
+                        val newIntakeEntry = IntakeEntry(date = currentDate, nutritionalInfo = userIntake)
+                        updatedIntakeHistory.add(newIntakeEntry)
+                    }
 
                     // Update lastMeal with the same data as userIntake
                     val updatedUserData = userData.copy(
@@ -497,28 +422,3 @@ class AnalysisResult : AppCompatActivity() {
         }
     }
 }
-
-data class NutritionFacts(
-    val serving_size: Double,
-    val energy: Double,
-    val fat: Double,
-    val carbohydrates: Double,
-    val protein: Double
-)
-
-data class AnalyzedFoodItem(
-    val name: String,
-    val mass: Double
-)
-
-data class CalculatedNutritionData(
-    val calories: Double,
-    val carbohydrates: Double,
-    val protein: Double,
-    val fat: Double
-)
-
-data class FinalizedNutritionData(
-    val name: String,
-    val nutrition: CalculatedNutritionData
-)

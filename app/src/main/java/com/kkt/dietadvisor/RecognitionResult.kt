@@ -7,18 +7,27 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.UnderlineSpan
 import android.util.Log
+import android.view.Gravity
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TableLayout
 import android.widget.TableRow
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.kkt.dietadvisor.models.AnalyzedFoodItem
+import com.kkt.dietadvisor.models.CalculatedNutritionData
+import com.kkt.dietadvisor.models.FinalizedNutritionData
+import com.kkt.dietadvisor.models.NutritionFacts
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -37,7 +46,7 @@ data class FoodItem(var name: String, val index: Int)
 class RecognitionResult : AppCompatActivity() {
 
     private lateinit var foodItems : List<FoodItem>
-    private lateinit var uriString: String
+    private lateinit var photoUri: Uri
     private lateinit var accessToken: String
 
     private val client: OkHttpClient by lazy {
@@ -45,9 +54,9 @@ class RecognitionResult : AppCompatActivity() {
         logging.setLevel(HttpLoggingInterceptor.Level.BODY)
         OkHttpClient.Builder()
 //            .addInterceptor(logging)
-            .connectTimeout(30, TimeUnit.SECONDS) // Change response timeout to 1 seconds
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(1, TimeUnit.MINUTES) // Change response timeout to 1 seconds
+            .readTimeout(1, TimeUnit.MINUTES)
+             .writeTimeout(1, TimeUnit.MINUTES)
             .build()
     }
 
@@ -67,18 +76,22 @@ class RecognitionResult : AppCompatActivity() {
             Main work flow:
             /yolo -> {DET.json} -> /calorie -> /user [PUT] (Update)
         */
-        // Retrieve the Photo Uri from the intent extras (as a string)
-        uriString = intent.getStringExtra("PHOTO_URI")
-            ?: throw IllegalArgumentException("Photo Uri is missing from the intent")
-
         // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
         // Retrieve access token from the intent extras
         accessToken = intent.getStringExtra("ACCESS_TOKEN")
             ?: throw IllegalArgumentException("Access token is missing from the intent")
         Log.d(TAG, "onCreate: Access Token Retrieved: $accessToken")
 
+        // Retrieve the recognition results items from the intent extras
+        val recognitionResults = intent.getStringExtra("RECOGNITION_RESULTS")
+            ?: throw IllegalArgumentException("Recognition Results are missing from the intent")
+
+        // Retrieve the Photo Uri from the intent extras (as a string)
+        val uriString = intent.getStringExtra("URI_STRING")
+            ?: throw IllegalArgumentException("Photo Uri is missing from the intent")
+
         // Convert back to Uri from string
-        val photoUri = uriString.let { Uri.parse(it) }
+        photoUri = uriString.let { Uri.parse(it) }
         Log.d(TAG, "onCreate: Photo Uri Retrieved: $photoUri")
 
         // Load retrieved Uri into image view
@@ -89,64 +102,12 @@ class RecognitionResult : AppCompatActivity() {
                 .into(resultImageView)
         }
 
-        /*
-        TODO:
-            Send [POST] request to /yolo endpoint, retrieve preliminary recognition values
-            then load into image view and continue with confirmation workflow
-        */
-        val requestBody = contentResolver.openInputStream(photoUri)?.use { inputStream ->
-            inputStream.readBytes().toRequestBody("image/jpeg".toMediaTypeOrNull())
-        }
+        // Populate food items list from the recognition results
+        foodItems = loadFoodItems(jsonData = recognitionResults)
+        println("Food items count: ${foodItems.size}")
 
-        requestBody?.let {
-            val multipartBody = requestBody.let {
-                MultipartBody.Builder()
-                    .setType(MultipartBody.FORM)
-                    .addFormDataPart("image", "filename.jpg", it)
-                    .build()
-            }
-
-            val request = multipartBody.let {
-                Request.Builder()
-                    .url(getString(R.string.DIET_ADVISOR_YOLO_ENDPOINT_URL))
-                    .post(it)
-                    .addHeader("accept", "text/plain")
-                    .addHeader("Content-Type", "multipart/form-data")
-                    .build()
-            }
-
-            request.let {
-                client.newCall(it).enqueue(object : Callback {
-                    override fun onFailure(call: Call, e: IOException) {
-                        Log.e(TAG, "onFailure: Request Failed: ${e.message}", )
-                        e.printStackTrace()
-                    }
-
-                    override fun onResponse(call: Call, response: Response) {
-                        if (response.isSuccessful) {
-                            // Handle the successful response
-                            response.body?.let { responseBody ->
-                                val jsonResponse = responseBody.string()
-                                Log.d(TAG, "onResponse: Viewing JSON Response")
-                                println(jsonResponse)
-
-                                // Populate food items list
-                                foodItems = loadFoodItems(jsonData = jsonResponse)
-                                println("Food items count: ${foodItems.size}")
-
-                                // Init UI with loaded food items
-                                runOnUiThread {
-                                    initUI(jsonData = jsonResponse)
-                                }
-                            }
-                        } else {
-                            Log.e(TAG, "onResponse: Request Failed: ${response.message}", )
-                        }
-                    }
-                })
-            }
-        }
-
+        // Initialize the rest of the UI as normal
+        initUI(jsonData = recognitionResults)
     }
 
     // Called after the foodItems list has been populated after receiving the network response
@@ -158,7 +119,7 @@ class RecognitionResult : AppCompatActivity() {
             val font = ResourcesCompat.getFont(this, R.font.itim)
             val idTextView = TextView(this).apply {
                 text = (index + 1).toString()
-                gravity = android.view.Gravity.CENTER
+                gravity = Gravity.CENTER
                 typeface = font
                 textSize = 17F
                 layoutParams = TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f)
@@ -210,12 +171,152 @@ class RecognitionResult : AppCompatActivity() {
             // Update JSON data
             val updatedJsonData = updateJsonData(foodItems, jsonData)
 
-            //  Send to the AnalysisResult activity
-            val intent = Intent(this, AnalysisResult::class.java)
-            intent.putExtra("UPDATED_JSON_DATA", updatedJsonData)
-            intent.putExtra("PHOTO_URI", uriString)
-            intent.putExtra("ACCESS_TOKEN", accessToken)
-            startActivity(intent)
+            // Set up processing indicator
+            val dialogView = layoutInflater.inflate(R.layout.progressbar_dialog, null)
+            val dialog = AlertDialog.Builder(this)
+                .setView(dialogView)
+                .setCancelable(false)
+                .create()
+
+            // NOTE: Dialog must be shown on screen for ${dialog.window} to produce a non-null value
+            dialog.show()
+            dialog.window?.setGravity(Gravity.CENTER)
+
+            /*
+            TODO:
+                Send [POST] request to /calorie endpoint, retrieve final nutritional values
+                then load into image view and continue with confirmation workflow
+            */
+            dispatchCalorieAnalysisRequest(photoUri, updatedJsonData) { isSuccessful, analysisResults ->
+                if (isSuccessful) {
+                    dialog.dismiss()
+
+                    //  Send to the AnalysisResult activity
+                    val intent = Intent(this@RecognitionResult, AnalysisResult::class.java)
+                    intent.putExtra("ACCESS_TOKEN", accessToken)
+                    intent.putExtra("ANALYSIS_RESULTS", analysisResults)
+                    intent.putExtra("URI_STRING", photoUri.toString())
+                    startActivity(intent)
+                } else {
+                    dialog.dismiss()
+                    Toast.makeText(this@RecognitionResult, resources.getString(R.string.error_message), Toast.LENGTH_LONG).show()
+                    confirmButton.text = resources.getString(R.string.try_again)
+                    confirmButton.setBackgroundResource(R.drawable.try_again_button)
+                }
+            }
+        }
+    }
+
+    private fun dispatchCalorieAnalysisRequest(photoUri: Uri, jsonData: String, onResult: (Boolean, String?) -> Unit) {
+        val requestBody = contentResolver.openInputStream(photoUri)?.use { inputStream ->
+            inputStream.readBytes().toRequestBody("image/jpeg".toMediaTypeOrNull())
+        }
+
+        requestBody?.let {
+            val multipartBody = requestBody.let {
+                MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("image", "filename.jpg", it)
+                    .addFormDataPart("data", jsonData)
+                    .build()
+            }
+
+            val request = multipartBody.let {
+                Request.Builder()
+                    .url(getString(R.string.DIET_ADVISOR_CALORIE_ENDPOINT_URL))
+                    .post(it)
+                    .addHeader("accept", "text/plain")
+                    .addHeader("Content-Type", "multipart/form-data")
+                    .build()
+            }
+
+            request.let {
+                client.newCall(it).enqueue(object : Callback {
+                    override fun onFailure(call: Call, e: IOException) {
+                        runOnUiThread {
+                            Log.e(TAG, "onFailure: Request Failed: ${e.message}")
+                            e.printStackTrace()
+                            onResult(false, null)
+                        }
+                    }
+
+                    override fun onResponse(call: Call, response: Response) {
+                        if (response.isSuccessful) {
+                            // Handle the successful response
+                            response.body?.let { responseBody ->
+                                runOnUiThread {
+                                    val jsonResponse = responseBody.string()
+                                    Log.d(TAG, "onResponse: Viewing JSON Response")
+                                    println(jsonResponse)
+
+                                    /* Perform nutrition quantity conversion */
+
+                                    // Load nutrient_data.json from resources
+                                    val inputStream = resources.openRawResource(R.raw.nutrient_data)
+                                    val nutritionFactsJSON =
+                                        inputStream.bufferedReader().use { reader -> reader.readText() }
+
+                                    val gson = Gson()
+
+                                    // Parse the nutrition data index and analyzed meal data from response
+                                    val nutritionMap: Map<String, NutritionFacts> = gson.fromJson(
+                                        nutritionFactsJSON,
+                                        object : TypeToken<Map<String, NutritionFacts>>() {}.type
+                                    )
+                                    val analyzedFoodItems: List<AnalyzedFoodItem> = gson.fromJson(
+                                        jsonResponse,
+                                        object : TypeToken<List<AnalyzedFoodItem>>() {}.type
+                                    )
+
+                                    // Calculate nutrition values for each food item
+                                    val finalizedNutritionData = analyzedFoodItems.mapNotNull { item ->
+                                        val nutritionFacts = nutritionMap[item.name]
+                                        nutritionFacts?.let {
+                                            Log.d(TAG, "Item mass for ${item.name}: ${item.mass}")
+                                            Log.d(
+                                                TAG,
+                                                "Serving size for ${item.name}: ${nutritionFacts.serving_size}"
+                                            )
+
+                                            val factor = item.mass / nutritionFacts.serving_size
+
+                                            Log.d(TAG, "Factor Calculated for ${item.name}: $factor")
+
+                                            val calculatedNutritionData = CalculatedNutritionData(
+                                                calories = nutritionFacts.energy * factor,
+                                                carbohydrates = nutritionFacts.carbohydrates * factor,
+                                                protein = nutritionFacts.protein * factor,
+                                                fat = nutritionFacts.fat * factor
+                                            )
+
+                                            FinalizedNutritionData(
+                                                name = item.name,
+                                                nutrition = calculatedNutritionData
+                                            )
+                                        }
+                                    }
+
+                                    // Convert result back to JSON
+                                    val currentMealNutritionFacts = gson.toJson(finalizedNutritionData)
+                                    Log.d(TAG, "onResponse: Current Meal Nutrition Facts Calculated!")
+                                    println(currentMealNutritionFacts)
+
+                                    // Send back the currentMealNutritionFacts to the caller
+                                    onResult(
+                                        true,
+                                        currentMealNutritionFacts
+                                    ) // Invoke callback with the good news
+                            }
+                        }
+                        } else {
+                            runOnUiThread {
+                                Log.e(TAG, "onResponse: Request Failed: ${response.message}")
+                                onResult(false, null)
+                            }
+                        }
+                    }
+                })
+            }
         }
     }
 

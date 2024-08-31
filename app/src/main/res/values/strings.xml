@@ -84,11 +84,15 @@
     <string name="select_food_item">Select Food Item</string>
     <string name="activity_level">Activity Level</string>
     <string name="select_activity_level">Select Activity Level</string>
+    <string name="loading_message">Processing… Please wait!</string>
+    <string name="try_again">Try Again</string>
+    <string name="error_message">An error occurred. Please try again!</string>
 
     <!--For Google Sign-In-->
     <string name="WEB_CLIENT_ID" translatable="false">908769963821-nfcfmbdtifcc0s1ta3secu4hppq1hra7.apps.googleusercontent.com</string>
     <string name="DIET_ADVISOR_USER_ENDPOINT_URL" translatable="false">https://diet.kencs.net/user</string>
     <string name="DIET_ADVISOR_YOLO_ENDPOINT_URL" translatable="false">https://diet.kencs.net/yolo</string>
-    <string name="DIET_ADVISOR_CALORIE_ENDPOINT_URL">https://diet.kencs.net/calorie</string>
+    <string name="DIET_ADVISOR_CALORIE_ENDPOINT_URL" translatable="false">https://diet.kencs.net/calorie</string>
+    <string name="DIET_ADVISOR_RECOMMENDATION_ENDPOINT_URL" translatable="false">https://diet.kencs.net/recommendation</string>
 
 </resources>

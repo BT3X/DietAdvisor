@@ -3,6 +3,7 @@ package com.kkt.dietadvisor
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.Toast
@@ -20,12 +21,23 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.materialswitch.MaterialSwitch
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONObject
+import java.io.IOException
 import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class Tracking : AppCompatActivity() {
+
+    private lateinit var accessToken: String
+    private lateinit var jsonString: String
 
     private lateinit var btnDatePicker: Button
     private lateinit var barChart: BarChart
@@ -38,6 +50,17 @@ class Tracking : AppCompatActivity() {
 
     private var intakeData: List<IntakeData> = listOf()
 
+    private val client: OkHttpClient by lazy {
+        val logging = HttpLoggingInterceptor()
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY)
+        OkHttpClient.Builder()
+//            .addInterceptor(logging)
+            .connectTimeout(30, TimeUnit.SECONDS) // Change response timeout to 1 seconds
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .build()
+    }
+
     @SuppressLint("SimpleDateFormat")
     override fun onCreate(savedInstanceState: Bundle?) {
         supportActionBar?.hide()
@@ -48,6 +71,25 @@ class Tracking : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+
+        // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
+        // Retrieve access token from the intent extras
+        accessToken = intent.getStringExtra("ACCESS_TOKEN")
+            ?: throw IllegalArgumentException("Access token is missing from the intent")
+        Log.d(TAG, "onCreate: Access Token Retrieved: $accessToken")
+
+        // Retrieve the user info from network request
+        getUserInfo(accessToken) { userExists, userInfo ->
+            if (userExists) {
+                userInfo?.let {
+                    Log.d(TAG, "getUserInfoCallback: Successfully retrieved user info")
+                    println(userInfo)
+                    jsonString = userInfo
+                }
+            } else {
+                Log.e(TAG, "getUserInfoCallback: Failure! User does not exist")
+            }
         }
 
         btnDatePicker = findViewById(R.id.pick_date_button)
@@ -68,15 +110,15 @@ class Tracking : AppCompatActivity() {
                 val startDateString = dateFormatter.format(Date(startDate))
                 val endDateString = dateFormatter.format(Date(endDate))
 
-                Toast.makeText(this, resources.getString(R.string.select_date_range)+"$startDateString " + resources.getString(R.string.to) + " $endDateString", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "${resources.getString(R.string.select_date_range)} $startDateString ${resources.getString(R.string.to)} $endDateString", Toast.LENGTH_LONG).show()
 
                 // Load and filter the user data based on the selected date range
-                intakeData = loadUserInfo(startDateString, endDateString)
+                intakeData = loadUserInfo(startDateString, endDateString, jsonString)
                 updateBarChart(intakeData)
             }
 
             datePicker.addOnNegativeButtonClickListener {
-                Toast.makeText(this, "${datePicker.headerText} "+resources.getString(R.string.is_cancelled), Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "${datePicker.headerText} ${resources.getString(R.string.is_cancelled)}", Toast.LENGTH_LONG).show()
             }
 
             datePicker.addOnCancelListener {
@@ -97,27 +139,68 @@ class Tracking : AppCompatActivity() {
         val profileButton = findViewById<FrameLayout>(R.id.profile_button)
 
         homeButton.setOnClickListener {
-            startActivity(Intent(this, HomePage::class.java))
+            val intent = Intent(this, HomePage::class.java)
+            intent.putExtra("ACCESS_TOKEN", accessToken) // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+
         }
 
         recommendationsButton.setOnClickListener {
-            startActivity(Intent(this, Recommendations::class.java))
+            val intent = Intent(this, Recommendations::class.java)
+            intent.putExtra("ACCESS_TOKEN", accessToken) // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
         }
 
         profileButton.setOnClickListener {
-            startActivity(Intent(this, UserProfile::class.java))
+            val intent = Intent(this, UserProfile::class.java)
+            intent.putExtra("ACCESS_TOKEN", accessToken) // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
         }
     }
 
+    private fun getUserInfo(accessToken: String, onResult: (Boolean, String?) -> Unit) {
+        val url = getString(R.string.DIET_ADVISOR_USER_ENDPOINT_URL)
+
+        val request = Request.Builder()
+            .url(url)
+            .addHeader("Authorization", "Bearer $accessToken")
+            .get() // GET request to retrieve user data
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                e.printStackTrace()
+                onResult(false, null)
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    // Handle the response
+                    val responseBody = response.body?.string()
+                    println(responseBody)
+                    // Here, you might want to parse the JSON response to a UserData object using Gson
+                    Log.d(TAG, "onResponse: Success! Retrieved user information!")
+                    onResult(true, responseBody)
+                } else {
+                    // Handle the error
+                    println("Request failed: ${response.message}")
+                    Log.d(TAG, "onResponse: Failure! No User to Retrieve!")
+                    onResult(false, null)
+                }
+            }
+        })
+    }
+
     @SuppressLint("SimpleDateFormat")
-    private fun loadUserInfo(startDate: String, endDate: String): List<IntakeData> {
+    private fun loadUserInfo(startDate: String, endDate: String, jsonString: String): List<IntakeData> {
         val intakeDataList = mutableListOf<IntakeData>()
 
         try {
-            val inputStream: InputStream = assets.open("userInfo.json")
-            val jsonString = inputStream.bufferedReader().use { it.readText() }
             val jsonObject = JSONObject(jsonString)
-            val intakeArray = jsonObject.getJSONArray("Intake")
+            val intakeArray = jsonObject.getJSONArray("intakeHistory")
 
             val dateFormatter = SimpleDateFormat("yyyy-MM-dd")
             val start = dateFormatter.parse(startDate) ?: Date()
@@ -127,13 +210,14 @@ class Tracking : AppCompatActivity() {
             val intakeMap = mutableMapOf<String, IntakeData>()
             for (i in 0 until intakeArray.length()) {
                 val intakeObject = intakeArray.getJSONObject(i)
-                val intakeDate = intakeObject.getString("Date")
+                val intakeDate = intakeObject.getString("date")
+                val nutritionalInfo = intakeObject.getJSONObject("nutritionalInfo")
                 intakeMap[intakeDate] = IntakeData(
                     date = intakeDate,
-                    calorie = intakeObject.getDouble("Calorie").toFloat(),
-                    protein = intakeObject.getDouble("Protein").toFloat(),
-                    carb = intakeObject.getDouble("Carb").toFloat(),
-                    fat = intakeObject.getDouble("Fat").toFloat()
+                    calorie = nutritionalInfo.getDouble("carb").toFloat() * 4 + nutritionalInfo.getDouble("protein").toFloat() * 4 + nutritionalInfo.getDouble("fat").toFloat() * 9,
+                    protein = nutritionalInfo.getDouble("protein").toFloat(),
+                    carb = nutritionalInfo.getDouble("carb").toFloat(),
+                    fat = nutritionalInfo.getDouble("fat").toFloat()
                 )
             }
 
@@ -217,9 +301,8 @@ class Tracking : AppCompatActivity() {
             }
         }
 
-        if (activeDataSets.isEmpty()) {
-            barChart.clear() // Clear the chart
-//            barChart.setNoDataText("No data available. Please select at least one nutrient category.")
+        if (activeDataSets.isEmpty() or intakeData.isEmpty()) {
+            barChart.clear() // Clear the chart if no datasets are active
             barChart.invalidate()
             return
         }
@@ -233,13 +316,12 @@ class Tracking : AppCompatActivity() {
             xAxis.valueFormatter = IndexAxisValueFormatter(labels)
 
             xAxis.labelCount = labels.size
-            if (activeDataSets.size>1){
+            if (activeDataSets.size > 1) {
                 xAxis.setCenterAxisLabels(true)
                 groupBars(0f, groupSpace, barSpace)
                 xAxis.axisMinimum = 0f
                 xAxis.axisMaximum = barChart.data.getGroupWidth(groupSpace, barSpace) * labels.size
-            }
-            else {
+            } else {
                 xAxis.setCenterAxisLabels(false)
                 xAxis.axisMinimum = -0.5f
                 xAxis.axisMaximum = labels.size + 0f

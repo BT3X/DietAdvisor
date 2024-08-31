@@ -32,6 +32,8 @@ import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONObject
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class SignUpwithOAuth : AppCompatActivity() {
 
@@ -72,7 +74,14 @@ class SignUpwithOAuth : AppCompatActivity() {
             val datePicker = DatePickerDialog(
                 this,
                 { _, selectedYear, selectedMonth, selectedDay ->
-                    val selectedDate = "$selectedYear-${selectedMonth + 1}-$selectedDay"
+                    // Set the selected date on the calendar instance
+                    calendar.set(selectedYear, selectedMonth, selectedDay)
+
+                    // Create a date format and format the selected date
+                    val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                    val selectedDate = dateFormat.format(calendar.time)
+
+                    // Set the formatted date to the TextView
                     dob.setText(selectedDate)
                 },
                 year,
@@ -112,7 +121,6 @@ class SignUpwithOAuth : AppCompatActivity() {
 
         val saveButton = findViewById<Button>(R.id.save_button)
         saveButton.setOnClickListener {
-            // Do something here to save info to DB
 
             // Get user info
             getGoogleUserInfo(accessToken, object : UserInfoCallback {
@@ -125,15 +133,23 @@ class SignUpwithOAuth : AppCompatActivity() {
                     val language = languageDropdown.text.toString()
                     val height = findViewById<EditText>(R.id.height).text.toString().toDoubleOrNull() ?: 0.0
                     val weight = findViewById<EditText>(R.id.weight).text.toString().toDoubleOrNull() ?: 0.0
-                    val physicalActivity = activityDropdown.text.toString().toDoubleOrNull() ?: 0.0
+                    val physicalActivity = activityDropdown.text.toString()
                     val dietaryGoal = dietGoalDropdown.text.toString()
                     val dietaryGoalAmount = 0.0
-                    val TMR = 0.0
-                    val TDEE = 0.0
                     val carb = 0.0
                     val protein = 0.0
                     val fat = 0.0
                     val calorie = 0.0
+
+                    // Calculate TMR and TDEE
+                    val (TMR, TDEE) = calculateTMRandTDEE(
+                        gender = gender,
+                        birthDate = birthDate,
+                        weight = weight,
+                        height = height,
+                        physicalActivity = physicalActivity,
+                        weightOptionAmount = dietaryGoalAmount
+                    )
 
                     // Build the UserData object
                     val userData = UserData(
@@ -147,7 +163,7 @@ class SignUpwithOAuth : AppCompatActivity() {
                         bodyMeasurements = BodyMeasurements(
                             weight = weight,
                             height = height,
-                            physicalActivity = physicalActivity
+                            physicalActivity = physicalActivity.toDoubleOrNull() ?: 0.0
                         ),
                         dietaryInfo = DietaryInfo(
                             dietaryGoal = dietaryGoal,
@@ -191,6 +207,53 @@ class SignUpwithOAuth : AppCompatActivity() {
             })
 
         }
+    }
+
+    private fun calculateTMRandTDEE(
+        gender: String,
+        birthDate: String,
+        weight: Double,
+        height: Double,
+        physicalActivity: String,
+        weightOptionAmount: Double
+    ): Pair<Double, Double> {
+        // Map for physical activity levels
+        val physicalActivityTable = mapOf(
+            "Sedentary" to 1.2,
+            "Lightly active" to 1.375,
+            "Moderately active" to 1.55,
+            "Very active" to 1.725,
+            "Super active" to 1.9
+        )
+
+        // Parse birth date
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val birthDateParsed = dateFormat.parse(birthDate)
+        val today = Calendar.getInstance()
+
+        val birthCalendar = Calendar.getInstance().apply { time = birthDateParsed }
+
+        // Calculate age
+        var age = today.get(Calendar.YEAR) - birthCalendar.get(Calendar.YEAR)
+        if (today.get(Calendar.DAY_OF_YEAR) < birthCalendar.get(Calendar.DAY_OF_YEAR)) {
+            age--
+        }
+
+        // Calculate weight option amount (assuming it's passed as a monthly amount)
+        val weightOptionAmountCalculated = (weightOptionAmount * 7700 / 30).roundTo(2)
+
+        // Calculate BMR
+        val BMRoffset = if (gender.lowercase(Locale.getDefault()) == "m") 5 else -161
+        val TMR = ((10 * weight) + (6.25 * height) - (5 * age) + BMRoffset).roundTo(2)
+
+        // Calculate TDEE
+        val TDEE = (TMR * (physicalActivityTable[physicalActivity] ?: 1.2)).roundTo(2)
+
+        return Pair(TMR, TDEE)
+    }
+
+    private fun Double.roundTo(decimals: Int): Double {
+        return "%.${decimals}f".format(this).toDouble()
     }
 
     private fun setupDropdown(

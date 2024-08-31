@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.FrameLayout
@@ -14,11 +15,32 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONObject
+import java.io.IOException
 import java.io.InputStream
 import java.util.Calendar
+import java.util.concurrent.TimeUnit
 
 class UserProfile : AppCompatActivity() {
+
+    private lateinit var accessToken: String
+
+    private val client: OkHttpClient by lazy {
+        val logging = HttpLoggingInterceptor()
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY)
+        OkHttpClient.Builder()
+//            .addInterceptor(logging)
+            .connectTimeout(30, TimeUnit.SECONDS) // Change response timeout to 1 seconds
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .build()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         supportActionBar?.hide()
@@ -31,8 +53,25 @@ class UserProfile : AppCompatActivity() {
             insets
         }
 
+        // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
+        // Retrieve access token from the intent extras
+        accessToken = intent.getStringExtra("ACCESS_TOKEN")
+            ?: throw IllegalArgumentException("Access token is missing from the intent")
+        Log.d(TAG, "onCreate: Access Token Retrieved: $accessToken")
+
         // Fetch and display user information
-        loadUserInfo()
+        getUserInfo(accessToken) { userExists, userInfo ->
+            if (userExists) {
+                userInfo?.let {
+                    runOnUiThread {
+                        Log.d(TAG, "onCreate: Loading UI with user info...")
+                        loadUserInfo(jsonString = userInfo)
+                    }
+                }
+            } else {
+                Log.e(TAG, "getUserInfoCallback: Failure! User does not exist", )
+            }
+        }
 
         // Navigation buttons
         val homeButton = findViewById<FrameLayout>(R.id.home_button)
@@ -40,15 +79,24 @@ class UserProfile : AppCompatActivity() {
         val trackingButton = findViewById<FrameLayout>(R.id.tracking_button)
 
         homeButton.setOnClickListener {
-            startActivity(Intent(this, HomePage::class.java))
+            val intent = Intent(this, HomePage::class.java)
+            intent.putExtra("ACCESS_TOKEN", accessToken) // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
         }
 
         recommendationsButton.setOnClickListener {
-            startActivity(Intent(this, Recommendations::class.java))
+            val intent = Intent(this, Recommendations::class.java)
+            intent.putExtra("ACCESS_TOKEN", accessToken) // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
         }
 
         trackingButton.setOnClickListener {
-            startActivity(Intent(this, Tracking::class.java))
+            val intent = Intent(this, Tracking::class.java)
+            intent.putExtra("ACCESS_TOKEN", accessToken) // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
         }
 
         // Sign out button
@@ -122,25 +170,71 @@ class UserProfile : AppCompatActivity() {
         }
     }
 
-    private fun loadUserInfo() {
+    private fun getUserInfo(acceVssToken: String, onResult: (Boolean, String?) -> Unit) {
+        val url = getString(R.string.DIET_ADVISOR_USER_ENDPOINT_URL)
+
+        val request = Request.Builder()
+            .url(url)
+            .addHeader("Authorization", "Bearer $accessToken")
+            .get() // GET request to retrieve user data
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                e.printStackTrace()
+                onResult(false, null)
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    // Handle the response
+                    val responseBody = response.body?.string()
+                    println(responseBody)
+                    // Here, you might want to parse the JSON response to a UserData object using Gson
+                    Log.d(TAG, "onResponse: Success! Retrieved user information!")
+                    onResult(true, responseBody)
+                } else {
+                    // Handle the error
+                    println("Request failed: ${response.message}")
+                    Log.d(TAG, "onResponse: Failure! No User to Retrieve!")
+                    onResult(false, null)
+                }
+            }
+        })
+    }
+
+    private fun loadUserInfo(jsonString: String) {
         try {
-            val inputStream: InputStream = assets.open("userInfo.json")
-            val jsonString = inputStream.bufferedReader().use { it.readText() }
             val jsonObject = JSONObject(jsonString)
-            val jsonArray = jsonObject.getJSONArray("Intake")
 
+            val personalInfo = jsonObject.getJSONObject("personalInfo")
+            val bodyMeasurements = jsonObject.getJSONObject("bodyMeasurements")
+            val dietaryInfo = jsonObject.getJSONObject("dietaryInfo")
 
-            findViewById<TextView>(R.id.username).text = jsonObject.getString("Username")
-            findViewById<TextView>(R.id.dob).text = jsonObject.getString("Date of Birth")
-            findViewById<TextView>(R.id.gender).text = jsonObject.getString("Gender")
-            findViewById<TextView>(R.id.height).text = jsonObject.getString("Height")
-            findViewById<TextView>(R.id.weight).text = jsonObject.getString("Weight")
-            findViewById<TextView>(R.id.diet_goal).text = jsonObject.getString("Dietary Goal")
-            findViewById<TextView>(R.id.activity_level).text = jsonObject.getString("Activity Level")
-            findViewById<TextView>(R.id.language).text = jsonObject.getString("Language")
+            // Set the user info fields
+            findViewById<TextView>(R.id.username).text = personalInfo.getString("userName")
+            findViewById<TextView>(R.id.dob).text = personalInfo.getString("birthDate")
+            findViewById<TextView>(R.id.gender).text = personalInfo.getString("gender")
 
+            findViewById<TextView>(R.id.height).text = bodyMeasurements.getInt("height").toString()
+            findViewById<TextView>(R.id.weight).text = bodyMeasurements.getInt("weight").toString()
+
+            findViewById<TextView>(R.id.diet_goal).text = dietaryInfo.getString("dietaryGoal")
+            findViewById<TextView>(R.id.activity_level).text = mapActivityLevelToString(bodyMeasurements.getInt("physicalActivity"))
+            findViewById<TextView>(R.id.language).text = personalInfo.getString("language")
         } catch (e: Exception) {
             e.printStackTrace()
+        }
+    }
+
+    private fun mapActivityLevelToString(activityLevel: Int): String {
+        return when (activityLevel) {
+            0 -> "Sedentary"
+            1 -> "Lightly Active"
+            2 -> "Moderately Active"
+            3 -> "Very Active"
+            4 -> "Extra Active"
+            else -> "Unknown"
         }
     }
 
