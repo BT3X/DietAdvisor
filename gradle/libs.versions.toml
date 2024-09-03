@@ -2,10 +2,12 @@
 activityKtx = "1.9.1"
 agp = "8.5.2"
 constraintlayoutComposeVersion = "1.0.1"
+core = "4.6.2"
 credentials = "1.5.0-alpha04"
 glide = "4.16.0"
 googleid = "1.5.0-alpha04"
 gson = "2.11.0"
+image = "4.6.2"
 kotlin = "2.0.0"
 coreKtx = "1.10.1"
 junit = "4.13.2"
@@ -23,6 +25,7 @@ navigationCompose = "2.8.0-rc01"
 okhttp = "4.12.0"
 pieChart = "0.7.0"
 playServicesAuth = "21.2.0"
+prism4jBundler = "2.0.0"
 securityCrypto = "1.1.0-alpha06"
 serialization = "1.7.2"
 constraintlayout = "2.1.4"
@@ -32,6 +35,7 @@ googleidVersion = "1.1.1"
 jjwtApi = "0.12.6"
 jjwtImpl = "0.12.6"
 jjwtGson = "0.12.6"
+syntaxHighlight = "4.6.2"
 
 
 [libraries]
@@ -43,9 +47,11 @@ androidx-credentials-play-services-auth = { module = "androidx.credentials:crede
 androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
 androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" }
+core = { module = "io.noties.markwon:core", version.ref = "core" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+image = { module = "io.noties.markwon:image", version.ref = "image" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version = "1.2.1" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version = "3.6.1" }
@@ -75,6 +81,8 @@ play-services-auth = { module = "com.google.android.gms:play-services-auth", ver
 jjwt-api = { group = "io.jsonwebtoken", name = "jjwt-api", version.ref = "jjwtApi" }
 jjwt-impl = { group = "io.jsonwebtoken", name = "jjwt-impl", version.ref = "jjwtImpl" }
 jjwt-gson = { group = "io.jsonwebtoken", name = "jjwt-gson", version.ref = "jjwtGson" }
+prism4j-bundler = { module = "io.noties:prism4j-bundler", version.ref = "prism4jBundler" }
+syntax-highlight = { module = "io.noties.markwon:syntax-highlight", version.ref = "syntaxHighlight" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

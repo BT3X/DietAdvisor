@@ -88,6 +88,12 @@
     <string name="try_again">Try Again</string>
     <string name="error_message">An error occurred. Please try again!</string>
 
+    <string name="get_recommendations_text">Get Recommendations</string>
+    <string name="retry_text">Retry</string>
+    <string name="loading_text">Loading…</string>
+    <string name="recommendation_request_success_message">Your recommendation is ready!</string>
+    <string name="recommendation_request_failure_message">An error occurred. Please retry.</string>
+
     <!--For Google Sign-In-->
     <string name="WEB_CLIENT_ID" translatable="false">908769963821-nfcfmbdtifcc0s1ta3secu4hppq1hra7.apps.googleusercontent.com</string>
     <string name="DIET_ADVISOR_USER_ENDPOINT_URL" translatable="false">https://diet.kencs.net/user</string>

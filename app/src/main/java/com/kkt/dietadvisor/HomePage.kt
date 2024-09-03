@@ -372,9 +372,7 @@ class HomePage : AppCompatActivity() {
                 Log.d(TAG, "loadUserInfo: Dates Match: ${intakeObject.getString("date") == todayDate}")
                 Log.d(TAG, "---------------------------------")
                 if (intakeObject.getString("date") == todayDate) {
-                    todayCalories = intakeObject.getJSONObject("nutritionalInfo").getDouble("carb").toFloat() * 4 +
-                            intakeObject.getJSONObject("nutritionalInfo").getDouble("protein").toFloat() * 4 +
-                            intakeObject.getJSONObject("nutritionalInfo").getDouble("fat").toFloat() * 9
+                    todayCalories = intakeObject.getJSONObject("nutritionalInfo").getDouble("calorie").toFloat()
                     todayProtein = intakeObject.getJSONObject("nutritionalInfo").getDouble("protein").toFloat()
                     todayCarbs = intakeObject.getJSONObject("nutritionalInfo").getDouble("carb").toFloat()
                     todayFat = intakeObject.getJSONObject("nutritionalInfo").getDouble("fat").toFloat()

@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.compose.compiler)
+    kotlin("kapt")
 }
 
 android {
@@ -100,6 +101,15 @@ dependencies {
 
     // Glide Image Loader
     implementation (libs.glide)
+
+    // Markwon Markdown Renderer
+    kapt("io.noties:prism4j-bundler:2.0.0")
+    implementation("io.noties.markwon:core:4.6.2")
+    implementation ("io.noties.markwon:image:4.6.2")
+    implementation ("io.noties.markwon:recycler:4.6.2")
+    implementation("io.noties.markwon:syntax-highlight:4.6.2") {
+        exclude(group = "org.jetbrains", module = "annotations-java5")
+    }
 
     // Encrypted Shared Prefs
     implementation (libs.androidx.security.crypto)

@@ -194,7 +194,6 @@ class Tracking : AppCompatActivity() {
         })
     }
 
-    @SuppressLint("SimpleDateFormat")
     private fun loadUserInfo(startDate: String, endDate: String, jsonString: String): List<IntakeData> {
         val intakeDataList = mutableListOf<IntakeData>()
 
@@ -202,7 +201,7 @@ class Tracking : AppCompatActivity() {
             val jsonObject = JSONObject(jsonString)
             val intakeArray = jsonObject.getJSONArray("intakeHistory")
 
-            val dateFormatter = SimpleDateFormat("yyyy-MM-dd")
+            val dateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             val start = dateFormatter.parse(startDate) ?: Date()
             val end = dateFormatter.parse(endDate) ?: Date()
 
@@ -214,7 +213,7 @@ class Tracking : AppCompatActivity() {
                 val nutritionalInfo = intakeObject.getJSONObject("nutritionalInfo")
                 intakeMap[intakeDate] = IntakeData(
                     date = intakeDate,
-                    calorie = nutritionalInfo.getDouble("carb").toFloat() * 4 + nutritionalInfo.getDouble("protein").toFloat() * 4 + nutritionalInfo.getDouble("fat").toFloat() * 9,
+                    calorie = nutritionalInfo.getDouble("calorie").toFloat(),
                     protein = nutritionalInfo.getDouble("protein").toFloat(),
                     carb = nutritionalInfo.getDouble("carb").toFloat(),
                     fat = nutritionalInfo.getDouble("fat").toFloat()
