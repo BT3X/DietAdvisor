@@ -12,11 +12,11 @@
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintHeight_percent="0.15"
+        app:layout_constraintHeight_percent="0.1"
         app:layout_constraintTop_toTopOf="parent"
         android:orientation="horizontal">
         <ImageView
-            android:padding="10dp"
+            android:padding="5dp"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -26,19 +26,19 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2.5"
-            android:padding="10dp"
             android:gravity="center"
             android:text="@string/homepage_greetings"
-            android:textSize="25sp" />
+            android:textSize="@dimen/textSizeHeader" />
     </LinearLayout>
     <TextView
         android:id="@+id/question"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.05"
         app:layout_constraintTop_toBottomOf="@+id/header"
         android:text="@string/homepage_question"
         android:fontFamily="@font/lemon"
-        android:textSize="20sp"
+        android:textSize="@dimen/textSizePageName"
         android:gravity="center"/>
 
 
@@ -48,28 +48,29 @@
         android:layout_height="0dp"
         android:gravity="center"
         android:text="@string/photo_instruction"
-        android:textSize="14sp"
+        android:textSize="@dimen/textSizePhotoInstruction"
+        android:layout_marginBottom="10dp"
         app:layout_constraintHeight_percent="0.1"
         app:layout_constraintTop_toBottomOf="@+id/question"
-        app:layout_constraintWidth_percent="0.7"
+        app:layout_constraintWidth_percent="0.75"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <LinearLayout
         android:id="@+id/upload_or_take_photo"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.07"
         android:gravity="center_horizontal"
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@+id/photo_instruction"
-        app:layout_constraintWidth_percent="0.8"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:id="@+id/upload_photo"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="match_parent"
             android:orientation="horizontal"
             android:background="@drawable/button"
             android:layout_marginEnd="30dp">
@@ -91,14 +92,14 @@
                 android:textAlignment="center"
                 android:layout_marginEnd="15dp"
                 android:textColor="@color/grayText"
-                android:textSize="17sp"
+                android:textSize="@dimen/textSizeContent"
                 />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/camera_button"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="match_parent"
             android:orientation="horizontal"
             android:background="@drawable/button">
 
@@ -119,7 +120,7 @@
                 android:textAlignment="center"
                 android:layout_marginEnd="15dp"
                 android:textColor="@color/grayText"
-                android:textSize="17sp"
+                android:textSize="@dimen/textSizeContent"
                 />
         </LinearLayout>
 
@@ -127,23 +128,23 @@
     <TextView
         android:id="@+id/today_consumption"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.05"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/upload_or_take_photo"
         android:text="@string/homepage_consumption"
-        android:textSize="20sp"
+        android:textSize="@dimen/textSizePageName"
         android:fontFamily="@font/lemon"
         android:textAlignment="center"
-        android:paddingTop="30dp"
-        android:paddingBottom="15dp"/>
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="5dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintHeight_percent="0.45"
+        app:layout_constraintHeight_percent="0.5"
         app:layout_constraintTop_toBottomOf="@+id/today_consumption"
-        app:layout_constraintBottom_toTopOf="@id/navigation_bar"
         android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
@@ -161,7 +162,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/calories"
-                    android:textSize="20sp"
+                    android:textSize="@dimen/textSizeMacroHP"
                     android:layout_gravity="center_horizontal" />
                 <FrameLayout
                     android:layout_width="match_parent"
@@ -180,7 +181,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:textAlignment="center"
-                        android:textSize="17sp"
+                        android:textSize="@dimen/textSizeContent"
                         />
                 </FrameLayout>
 
@@ -196,7 +197,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/carbohydrate"
-                    android:textSize="20sp"
+                    android:textSize="@dimen/textSizeMacroHP"
                     android:layout_gravity="center_horizontal" />
                 <FrameLayout
                     android:layout_width="match_parent"
@@ -215,7 +216,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:textAlignment="center"
-                        android:textSize="17sp"
+                        android:textSize="@dimen/textSizeContent"
                         />
                 </FrameLayout>
 
@@ -237,7 +238,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/protein"
-                    android:textSize="20sp"
+                    android:textSize="@dimen/textSizeMacroHP"
                     android:layout_gravity="center_horizontal" />
                 <FrameLayout
                     android:layout_width="match_parent"
@@ -256,7 +257,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:textAlignment="center"
-                        android:textSize="17sp"
+                        android:textSize="@dimen/textSizeContent"
                         />
                 </FrameLayout>
 
@@ -270,7 +271,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/fat"
-                    android:textSize="20sp"
+                    android:textSize="@dimen/textSizeMacroHP"
                     android:layout_gravity="center_horizontal" />
                 <FrameLayout
                     android:layout_width="match_parent"
@@ -289,7 +290,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:textAlignment="center"
-                        android:textSize="17sp"
+                        android:textSize="@dimen/textSizeContent"
                         />
                 </FrameLayout>
 

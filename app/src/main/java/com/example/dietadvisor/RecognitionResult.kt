@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.UnderlineSpan
+import android.util.Log
 import android.view.Gravity
 import android.widget.Button
 import android.widget.TableLayout
@@ -45,54 +46,35 @@ class RecognitionResult : AppCompatActivity() {
         val tableLayout = findViewById<TableLayout>(R.id.recognized_food_items)
 
         for ((index, food) in foodItems.withIndex()) {
-            val tableRow = TableRow(this)
-            val font = ResourcesCompat.getFont(this, R.font.itim)
-            val idTextView = TextView(this).apply {
-                text = (index + 1).toString()
-                gravity = Gravity.CENTER
-                typeface = font
-                textSize = 17F
-//                setBackgroundResource(R.drawable.table_background)
-                layoutParams = TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f)
-                setPadding(16, 8, 16, 8)
-            }
+            val inflater = layoutInflater
+            val tableRow = inflater.inflate(R.layout.recognition_row_template, tableLayout, false) as TableRow
 
-            val nameTextView = TextView(this).apply {
-                text = food.name
-                typeface = font
-                textSize = 17F
-//                setBackgroundResource(R.drawable.table_background)
-                layoutParams = TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 2f)
-                setPadding(16, 8, 16, 8)
-            }
+            val idTextView = tableRow.findViewById<TextView>(R.id.number)
+            idTextView.text = (index + 1).toString()
 
-            val changeTextView = TextView(this).apply {
+            val nameTextView = tableRow.findViewById<TextView>(R.id.name)
+            nameTextView.text = food.name
+
+            Log.d("DEBUG", "name: "+nameTextView.text)
+
+            val changeTextView = tableRow.findViewById<TextView>(R.id.change)
+            changeTextView.apply {
                 val changeText = resources.getString(R.string.change)
                 val spannableString = SpannableString(changeText)
                 spannableString.setSpan(UnderlineSpan(), 0, changeText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                 text = spannableString
                 gravity = Gravity.CENTER
-//                setBackgroundResource(R.drawable.table_background)
-                typeface = font
-                textSize = 17F
-                layoutParams = TableRow.LayoutParams(0, TableRow.LayoutParams.WRAP_CONTENT, 1f)
-                setPadding(16, 8, 16, 8)
 
                 setOnClickListener {
                     showChangeFoodDialog(food, nameTextView)
                 }
             }
 
-            tableRow.addView(idTextView)
-            tableRow.addView(nameTextView)
-            tableRow.addView(changeTextView)
-            tableRow.dividerDrawable = ResourcesCompat.getDrawable(resources, R.drawable.divider_column, null)
-            tableRow.showDividers = TableRow.SHOW_DIVIDER_MIDDLE
-
-            println("Adding row $index with food name: ${food.name}")
-
-            tableLayout.addView(tableRow)
+            tableLayout.addView(tableRow, tableLayout.childCount-1)
         }
+
+        val totalFoodCount = findViewById<TextView>(R.id.food_count)
+        totalFoodCount.text = resources.getString(R.string.food_count) + " "+ foodItems.size
 
         val cancelButton = findViewById<Button>(R.id.cancel_button)
         val confirmButton = findViewById<Button>(R.id.confirm_button)
@@ -112,7 +94,7 @@ class RecognitionResult : AppCompatActivity() {
             dialog.show()
             dialog.window?.setGravity(Gravity.CENTER)
 
-            val isSuccessful = false
+            val isSuccessful = true
 
             dialogView.postDelayed({
                 dialog.dismiss()

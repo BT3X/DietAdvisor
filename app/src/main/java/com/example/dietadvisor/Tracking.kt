@@ -218,7 +218,7 @@ class Tracking : AppCompatActivity() {
             }
         }
 
-        if (activeDataSets.isEmpty()) {
+        if (activeDataSets.isEmpty() || intakeData.isEmpty()) {
             barChart.clear() // Clear the chart if no datasets are active
             barChart.invalidate()
             return

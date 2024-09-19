@@ -12,12 +12,12 @@
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintHeight_percent="0.15"
+        app:layout_constraintHeight_percent="0.1"
         app:layout_constraintTop_toTopOf="parent"
         android:orientation="horizontal">
         <ImageView
             android:id="@+id/imageView2"
-            android:padding="10dp"
+            android:padding="5dp"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -26,12 +26,9 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2.5"
-            android:padding="10dp"
             android:gravity="center"
             android:text="@string/recommendations_convo"
-            android:textSize="25sp"
-            android:fontFamily="@font/itim"
-            android:textColor="@color/greenText"/>
+            android:textSize="@dimen/textSizeHeader" />
     </LinearLayout>
     <TextView
         android:id="@+id/page_title"
@@ -43,7 +40,7 @@
         android:gravity="center"
         android:text="@string/recommendations_title"
         android:fontFamily="@font/lemon"
-        android:textSize="25sp"
+        android:textSize="@dimen/textSizePageName"
         android:paddingBottom="5dp" />
     <TextView
         android:id="@+id/chatgpt"
@@ -54,7 +51,8 @@
         app:layout_constraintStart_toStartOf="parent"
         android:text="@string/chatgpt"
         android:gravity="center"
-        android:paddingBottom="5dp"/>
+        android:paddingBottom="5dp"
+        android:textSize="@dimen/textSizePhotoInstruction"/>
     <Button
         android:id="@+id/request_recommendations"
         android:layout_width="wrap_content"
@@ -66,7 +64,7 @@
         android:padding="10dp"
         android:textColor="@color/grayText"
         android:background="@drawable/button"
-        android:textSize="17sp"
+        android:textSize="@dimen/textSizeContent"
         />
 
 
@@ -85,7 +83,7 @@
             android:id="@+id/recommendations_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="17sp"
+            android:textSize="@dimen/textSizeContent"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:paddingTop="8dp"

@@ -12,12 +12,11 @@
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintHeight_percent="0.15"
+        app:layout_constraintHeight_percent="0.1"
         app:layout_constraintTop_toTopOf="parent"
         android:orientation="horizontal">
         <ImageView
-            android:id="@+id/imageView2"
-            android:padding="10dp"
+            android:padding="5dp"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -26,22 +25,22 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2.5"
-            android:padding="10dp"
             android:gravity="center"
             android:text="@string/recognition_convo"
-            android:textSize="25sp" />
+            android:textSize="@dimen/textSizeHeader" />
     </LinearLayout>
     <TextView
         android:id="@+id/page_title"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.05"
         app:layout_constraintTop_toBottomOf="@+id/header"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:gravity="center"
         android:text="@string/recognition_title"
         android:fontFamily="@font/lemon"
-        android:textSize="25sp"
+        android:textSize="@dimen/textSizePageName"
         android:paddingBottom="5dp"
         />
 
@@ -59,69 +58,109 @@
         />
 
     <TableLayout
-        android:id="@+id/recognized_food_items"
+        android:id="@+id/table_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:stretchColumns="1"
-        android:layout_margin="10dp"
-        android:divider="@drawable/divider_row"
-        android:showDividers="middle"
-        android:dividerPadding="1dp"
-        android:background="@drawable/table_background"
-        app:layout_constraintTop_toBottomOf="@+id/result_image"
+        app:layout_constraintTop_toBottomOf="@id/result_image"
+        app:layout_constraintBottom_toTopOf="@+id/table_content_sv"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:divider="@drawable/divider_row"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="0dp"
+        android:showDividers="middle"
         >
         <TableRow
             android:layout_width="match_parent"
             android:background="@drawable/table_top_row_bg"
             android:divider="@drawable/divider_column"
-            android:showDividers="middle"
-            android:dividerPadding="1dp"
-            >
+            android:showDividers="middle">
+
             <TextView
                 android:layout_width="0dp"
+                android:layout_weight="0.8"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="@string/number"
                 android:textStyle="bold"
-                android:textSize="17sp"
+                android:textSize="@dimen/textSizeContent"
+                android:gravity="center"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
-                android:gravity="center"
                 android:textColor="@color/grayText"/>
 
             <TextView
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:text="@string/food_name"
-                android:textSize="17sp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:textColor="@color/grayText"/>
-            <TextView
-                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text=""
-                android:textSize="17sp"
+                android:text="@string/food_name"
+                android:textSize="@dimen/textSizeContent"
+                android:textStyle="bold"
+                android:gravity="center"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
-                android:textStyle="bold"
-                android:gravity="center"
                 android:textColor="@color/grayText"/>
 
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="@dimen/textSizeContent"
+                android:gravity="center"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:textColor="@color/grayText"/>
         </TableRow>
+
     </TableLayout>
+    <ScrollView
+        android:id="@+id/table_content_sv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.35"
+        app:layout_constraintTop_toBottomOf="@id/table_header"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <TableLayout
+            android:id="@+id/recognized_food_items"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:divider="@drawable/divider_row"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="0dp"
+            android:showDividers="middle"
+            android:background="@drawable/table_background"
+            >
+            <TableRow
+                android:layout_width="match_parent"
+                android:divider="@drawable/divider_column"
+                android:showDividers="middle">
+                <TextView
+                    android:id="@+id/food_count"
+                    android:text=""
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/textSizeContent"/>
+            </TableRow>
+
+        </TableLayout>
+    </ScrollView>
+
+
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -129,7 +168,7 @@
         android:layout_marginTop="20dp"
         android:orientation="horizontal"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@+id/recognized_food_items"
+        app:layout_constraintTop_toBottomOf="@+id/table_content_sv"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         >

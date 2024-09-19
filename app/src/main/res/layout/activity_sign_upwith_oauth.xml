@@ -11,7 +11,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        app:layout_constraintWidth_percent="0.7"
+        app:layout_constraintWidth_percent="0.8"
         android:gravity="center"
         android:orientation="vertical"
         app:layout_constraintTop_toTopOf="parent"
@@ -28,7 +28,8 @@
             android:gravity="center_horizontal"
             android:text="@string/signup_oauth_title"
             android:textColor="@color/greenText"
-            android:textSize="30sp" />
+            android:textSize="@dimen/_30sdp"
+            tools:ignore="SpUsage" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -38,10 +39,10 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
+                android:layout_weight="2.5"
                 android:gravity="center"
                 android:padding="12dp"
-                android:textSize="15sp"
+                android:textSize="@dimen/textSizeContent"
                 android:textColor="@color/greenText"
                 android:fontFamily="@font/itim"
                 android:text="@string/dob"/>
@@ -56,7 +57,7 @@
                 android:hint="@string/date_format"
                 android:textColor="@color/greenText"
                 android:textColorHint="@color/grayTextInTextView"
-                android:textSize="15sp"
+                android:textSize="@dimen/textSizeContent"
                 android:focusable="false"
                 android:clickable="true" />
 
@@ -69,10 +70,10 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
+                android:layout_weight="2.5"
                 android:gravity="center"
                 android:padding="12dp"
-                android:textSize="15sp"
+                android:textSize="@dimen/textSizeContent"
                 android:textColor="@color/greenText"
                 android:fontFamily="@font/itim"
                 android:text="@string/gender"/>
@@ -85,7 +86,7 @@
                 android:inputType="none"
                 android:hint="@string/gender"
                 android:textColorHint="@color/grayTextInTextView"
-                android:textSize="15sp"
+                android:textSize="@dimen/textSizeContent"
                 android:textColor="@color/greenText"
                 android:padding="14dp"
                 android:background="@drawable/text_view_container"/>
@@ -98,10 +99,10 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
+                android:layout_weight="2.5"
                 android:gravity="center"
                 android:padding="12dp"
-                android:textSize="15sp"
+                android:textSize="@dimen/textSizeContent"
                 android:textColor="@color/greenText"
                 android:fontFamily="@font/itim"
                 android:text="@string/height"/>
@@ -115,7 +116,7 @@
                 android:hint="@string/height_hint"
                 android:textColor="@color/greenText"
                 android:textColorHint="@color/grayTextInTextView"
-                android:textSize="15sp"
+                android:textSize="@dimen/textSizeContent"
                 android:inputType="number"/>
 
         </LinearLayout>
@@ -127,10 +128,10 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
+                android:layout_weight="2.5"
                 android:gravity="center"
                 android:padding="12dp"
-                android:textSize="15sp"
+                android:textSize="@dimen/textSizeContent"
                 android:textColor="@color/greenText"
                 android:fontFamily="@font/itim"
                 android:text="@string/weight"/>
@@ -144,7 +145,7 @@
                 android:hint="@string/weight_hint"
                 android:textColor="@color/greenText"
                 android:textColorHint="@color/grayTextInTextView"
-                android:textSize="15sp"
+                android:textSize="@dimen/textSizeContent"
                 android:inputType="number"/>
 
         </LinearLayout>
@@ -156,10 +157,10 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
+                android:layout_weight="2.5"
                 android:gravity="center"
                 android:padding="12dp"
-                android:textSize="15sp"
+                android:textSize="@dimen/textSizeContent"
                 android:textColor="@color/greenText"
                 android:fontFamily="@font/itim"
                 android:text="@string/diet_goal"/>
@@ -172,7 +173,7 @@
                 android:inputType="none"
                 android:hint="@string/diet_goal"
                 android:textColorHint="@color/grayTextInTextView"
-                android:textSize="15sp"
+                android:textSize="@dimen/textSizeContent"
                 android:textColor="@color/greenText"
                 android:padding="14dp"
                 android:background="@drawable/text_view_container"/>
@@ -186,10 +187,10 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
+                android:layout_weight="2.5"
                 android:gravity="center"
                 android:padding="12dp"
-                android:textSize="15sp"
+                android:textSize="@dimen/textSizeContent"
                 android:textColor="@color/greenText"
                 android:fontFamily="@font/itim"
                 android:text="@string/activity_level" />
@@ -202,7 +203,7 @@
                 android:inputType="none"
                 android:hint="@string/activity_level"
                 android:textColorHint="@color/grayTextInTextView"
-                android:textSize="15sp"
+                android:textSize="@dimen/textSizeContent"
                 android:textColor="@color/greenText"
                 android:padding="14dp"
                 android:background="@drawable/text_view_container"/>
@@ -216,10 +217,10 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
+                android:layout_weight="2.5"
                 android:gravity="center"
                 android:padding="12dp"
-                android:textSize="15sp"
+                android:textSize="@dimen/textSizeContent"
                 android:textColor="@color/greenText"
                 android:fontFamily="@font/itim"
                 android:text="@string/language"/>
@@ -232,7 +233,7 @@
                 android:inputType="none"
                 android:hint="@string/language"
                 android:textColorHint="@color/grayTextInTextView"
-                android:textSize="15sp"
+                android:textSize="@dimen/textSizeContent"
                 android:textColor="@color/greenText"
                 android:padding="14dp"
                 android:background="@drawable/text_view_container"/>
@@ -246,7 +247,7 @@
             android:background="@drawable/button"
             android:textColor="@color/grayText"
             android:fontFamily="@font/itim"
-            android:textSize="15sp"
+            android:textSize="@dimen/textSizeContent"
             android:gravity="center"
             android:textAllCaps="false"
             />

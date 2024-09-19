@@ -12,12 +12,12 @@
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintHeight_percent="0.15"
+        app:layout_constraintHeight_percent="0.1"
         app:layout_constraintTop_toTopOf="parent"
         android:orientation="horizontal">
         <ImageView
             android:id="@+id/imageView2"
-            android:padding="10dp"
+            android:padding="5dp"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -26,10 +26,9 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2.5"
-            android:padding="10dp"
             android:gravity="center"
             android:text="@string/tracking_convo"
-            android:textSize="25sp"
+            android:textSize="@dimen/textSizeHeader"
             android:fontFamily="@font/itim"
             android:textColor="@color/greenText"/>
     </LinearLayout>
@@ -37,35 +36,38 @@
     <TextView
         android:id="@+id/page_title"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.05"
         app:layout_constraintTop_toBottomOf="@+id/header"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:gravity="center"
         android:text="@string/tracking_title"
         android:fontFamily="@font/lemon"
-        android:textSize="25sp"
+        android:textSize="@dimen/textSizePageName"
         android:paddingBottom="5dp" />
 
     <Button
         android:id="@+id/pick_date_button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintHeight="0.07"
         app:layout_constraintTop_toBottomOf="@id/page_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:background="@drawable/button"
         android:text="@string/select_date"
-        android:textSize="17sp"
+        android:textSize="@dimen/textSizeContent"
         android:textColor="@color/grayText"
         android:fontFamily="@font/itim"
         android:textAllCaps="false"
-        android:padding="10dp"/>
+        android:layout_margin="10dp"/>
 
     <LinearLayout
         android:id="@+id/toggle_switches"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.15"
         app:layout_constraintTop_toBottomOf="@id/pick_date_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -81,7 +83,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:text="@string/calories"
-                android:textSize="17sp"/>
+                android:textSize="@dimen/textSizeContent"/>
             <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/calorie_toggle"
                 android:layout_width="wrap_content"
@@ -104,7 +106,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:text="@string/carbohydrate"
-                android:textSize="17sp"/>
+                android:textSize="@dimen/textSizeContent"/>
             <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/carb_toggle"
                 android:layout_width="wrap_content"
@@ -126,7 +128,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:text="@string/protein"
-                android:textSize="17sp"/>
+                android:textSize="@dimen/textSizeContent"/>
             <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/protein_toggle"
                 android:layout_width="wrap_content"
@@ -148,7 +150,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:text="@string/fat"
-                android:textSize="17sp"/>
+                android:textSize="@dimen/textSizeContent"/>
             <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/fat_toggle"
                 android:layout_width="wrap_content"
@@ -169,11 +171,13 @@
 
     <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/barChart"
-        android:layout_width="400dp"
-        android:layout_height="400dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toggle_switches"/>
+        app:layout_constraintTop_toBottomOf="@id/toggle_switches"
+        app:layout_constraintBottom_toTopOf="@id/navigation_bar"/>
 
 
 

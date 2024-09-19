@@ -54,7 +54,7 @@
     <string name="diet_goal">Dietary Goal</string>
     <string name="language">Language</string>
     <string name="sign_out">Sign Out</string>
-    <string name="recognition_convo">Please confirm the food items</string>
+    <string name="recognition_convo">Please confirm the food items!</string>
     <string name="recognition_title">Recognized Food Items</string>
     <string name="number">No.</string>
     <string name="confirm">Confirm</string>
@@ -132,6 +132,7 @@
     <string name="loading_message">Processing… Please wait!</string>
     <string name="try_again">Try Again</string>
     <string name="error_message">An error occurred. Please try again!</string>
+    <string name="food_count">Total Food Count: </string>
 
     <string name="markdown_text">
     <![CDATA[

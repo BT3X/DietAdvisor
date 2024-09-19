@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="textSizeHeader">@dimen/_23sdp</dimen>
+    <dimen name="textSizePageName">@dimen/_20sdp</dimen>
+    <dimen name="textSizeContent">@dimen/_17sdp</dimen>
+    <dimen name="textSizePhotoInstruction">@dimen/_14sdp</dimen>
+    <dimen name="textSizeMacroHP">@dimen/_20sdp</dimen>
+    <dimen name="textSizeWelcome">@dimen/_35sdp</dimen>
+</resources>
