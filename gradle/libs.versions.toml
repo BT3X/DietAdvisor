@@ -1,6 +1,7 @@
 [versions]
 activityKtx = "1.9.1"
 agp = "8.5.2"
+appauth = "0.10.0"
 constraintlayoutComposeVersion = "1.0.1"
 core = "4.6.2"
 credentials = "1.5.0-alpha04"
@@ -26,6 +27,7 @@ okhttp = "4.12.0"
 pieChart = "0.7.0"
 playServicesAuth = "21.2.0"
 prism4jBundler = "2.0.0"
+recycler = "4.6.2"
 securityCrypto = "1.1.0-alpha06"
 serialization = "1.7.2"
 constraintlayout = "2.1.4"
@@ -47,6 +49,7 @@ androidx-credentials-play-services-auth = { module = "androidx.credentials:crede
 androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
 androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" }
+appauth = { module = "net.openid:appauth", version.ref = "appauth" }
 core = { module = "io.noties.markwon:core", version.ref = "core" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
@@ -82,6 +85,7 @@ jjwt-api = { group = "io.jsonwebtoken", name = "jjwt-api", version.ref = "jjwtAp
 jjwt-impl = { group = "io.jsonwebtoken", name = "jjwt-impl", version.ref = "jjwtImpl" }
 jjwt-gson = { group = "io.jsonwebtoken", name = "jjwt-gson", version.ref = "jjwtGson" }
 prism4j-bundler = { module = "io.noties:prism4j-bundler", version.ref = "prism4jBundler" }
+recycler = { module = "io.noties.markwon:recycler", version.ref = "recycler" }
 syntax-highlight = { module = "io.noties.markwon:syntax-highlight", version.ref = "syntaxHighlight" }
 
 [plugins]

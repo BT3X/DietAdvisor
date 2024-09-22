@@ -23,12 +23,12 @@
             android:layout_weight="1"
             app:srcCompat="@drawable/logo_without_bg" />
         <TextView
+            android:id="@+id/tracking_greeting_text"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2.5"
             android:padding="10dp"
             android:gravity="center"
-            android:text="@string/tracking_convo"
             android:textSize="25sp"
             android:fontFamily="@font/itim"
             android:textColor="@color/greenText"/>

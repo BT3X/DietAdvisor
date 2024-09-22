@@ -22,6 +22,11 @@ import com.google.gson.Gson
 import com.kkt.dietadvisor.models.IntakeEntry
 import com.kkt.dietadvisor.models.NutritionalInfo
 import com.kkt.dietadvisor.models.UserData
+import com.kkt.dietadvisor.utility.AuthStateUtil
+import com.kkt.dietadvisor.utility.TokenStateUtil
+import com.kkt.dietadvisor.utility.UserInfoUtil
+import net.openid.appauth.AuthState
+import net.openid.appauth.AuthorizationService
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -48,7 +53,9 @@ data class FoodItemAnalysis(
 class AnalysisResult : AppCompatActivity() {
 
     private lateinit var foodItems: List<FoodItemAnalysis>
-    private lateinit var accessToken: String
+
+    private lateinit var authState: AuthState
+    private lateinit var authService: AuthorizationService
 
     private val client: OkHttpClient by lazy {
         val logging = HttpLoggingInterceptor()
@@ -73,11 +80,9 @@ class AnalysisResult : AppCompatActivity() {
             insets
         }
 
-        // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
-        // Retrieve access token from the intent extras
-        accessToken = intent.getStringExtra("ACCESS_TOKEN")
-            ?: throw IllegalArgumentException("Access token is missing from the intent")
-        Log.d(TAG, "onCreate: Access Token Retrieved: $accessToken")
+        // Initialize AuthorizationService & AuthState
+        authService = AuthorizationService(this)
+        authState = AuthStateUtil.readAuthState(this)
 
         // Retrieve the JSON data from the intent extras
         val analysisResults = intent.getStringExtra("ANALYSIS_RESULTS")
@@ -250,16 +255,21 @@ class AnalysisResult : AppCompatActivity() {
             )
 
             // TODO: Add callback so that intent is started only if the update is successful
-            updateUserIntake(accessToken = accessToken, userIntake = totalIntake)
-            val intent = Intent(this, Tracking::class.java)
-            intent.putExtra("ACCESS_TOKEN", accessToken)
-            startActivity(intent)
+            TokenStateUtil.checkAndRenewAccessToken(this, authState, authService) { _ ->
+                val accessToken = authState.accessToken
+                accessToken?.let {
+                    updateUserIntake(accessToken, totalIntake) {
+                        val intent = Intent(this, Tracking::class.java)
+                        startActivity(intent)
+                    }
+                }
+            }
         }
     }
 
-    private fun updateUserIntake(accessToken: String, userIntake: NutritionalInfo) {
+    private fun updateUserIntake(accessToken: String, userIntake: NutritionalInfo, onUpdateSuccess: (Boolean) -> Unit) {
         // Retrieve the user info
-        getUserInfo(accessToken) { userExists, userInfo ->
+        UserInfoUtil.getUserInfo(this, accessToken, client) { userExists, userInfo ->
             if (userExists) {
                 userInfo?.let {
                     // Convert the response body to UserData object
@@ -315,10 +325,12 @@ class AnalysisResult : AppCompatActivity() {
                         if (updateSuccessful) {
                             runOnUiThread {
                                 Toast.makeText(this, "Meal Added to Tracking!", Toast.LENGTH_SHORT).show()
+                                onUpdateSuccess(true)
                             }
                         } else {
                             runOnUiThread {
                                 Toast.makeText(this, "Something went wrong...", Toast.LENGTH_SHORT).show()
+                                onUpdateSuccess(false)
                             }
                         }
                     }
@@ -366,39 +378,6 @@ class AnalysisResult : AppCompatActivity() {
         })
     }
 
-    private fun getUserInfo(accessToken: String, onResult: (Boolean, String?) -> Unit) {
-        val url = getString(R.string.DIET_ADVISOR_USER_ENDPOINT_URL)
-
-        val request = Request.Builder()
-            .url(url)
-            .addHeader("Authorization", "Bearer $accessToken")
-            .get() // GET request to retrieve user data
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                e.printStackTrace()
-                onResult(false, null)
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    // Handle the response
-                    val responseBody = response.body?.string()
-                    println(responseBody)
-                    // Here, you might want to parse the JSON response to a UserData object using Gson
-                    Log.d(TAG, "onResponse: Success! Retrieved user information!")
-                    onResult(true, responseBody)
-                } else {
-                    // Handle the error
-                    println("Request failed: ${response.message}")
-                    Log.d(TAG, "onResponse: Failure! No User to Retrieve!")
-                    onResult(false, null)
-                }
-            }
-        })
-    }
-
     private fun loadFoodItems(jsonData: String): List<FoodItemAnalysis> {
         return try {
             val jsonArray = JSONArray(jsonData)
@@ -420,5 +399,9 @@ class AnalysisResult : AppCompatActivity() {
             e.printStackTrace()
             emptyList() // Return empty list in case there's an error
         }
+    }
+
+    companion object {
+        const val TAG = "AnalysisResult"
     }
 }

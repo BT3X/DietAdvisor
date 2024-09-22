@@ -14,11 +14,13 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.compose.Visibility
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import com.kkt.dietadvisor.utility.AuthStateUtil
+import com.kkt.dietadvisor.utility.TokenStateUtil
+import com.kkt.dietadvisor.utility.UserInfoUtil
 import io.noties.markwon.Markwon
 import io.noties.markwon.SoftBreakAddsNewLinePlugin
 import io.noties.markwon.image.ImagesPlugin
@@ -29,6 +31,8 @@ import io.noties.prism4j.Prism4j
 import io.noties.prism4j.annotations.PrismBundle
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import net.openid.appauth.AuthState
+import net.openid.appauth.AuthorizationService
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -42,16 +46,19 @@ import org.json.JSONObject
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
+const val MAX_TYPING_DURATION = 10_000L
+
 class Recommendations : AppCompatActivity() {
 
-    private lateinit var accessToken: String
+    private lateinit var authState: AuthState
+    private lateinit var authService: AuthorizationService
+
     private var renderedText: Spanned? = null
-    private val MAX_TYPING_DURATION = 10_000L
 
     private lateinit var recommendationRequest: Button
     private lateinit var recommendationText: TextView
     private lateinit var recommendationSV: ScrollView
-    private lateinit var loadingIndicator: ProgressBar
+    private lateinit var loadingContainer: FrameLayout
     private lateinit var successLayout: FrameLayout
     private lateinit var failureLayout: FrameLayout
 
@@ -77,17 +84,15 @@ class Recommendations : AppCompatActivity() {
             insets
         }
 
-        // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
-        // Retrieve access token from the intent extras
-        accessToken = intent.getStringExtra("ACCESS_TOKEN")
-            ?: throw IllegalArgumentException("Access token is missing from the intent")
-        Log.d(TAG, "onCreate: Access Token Retrieved: $accessToken")
+        // Initialize AuthorizationService & AuthState
+        authService = AuthorizationService(this)
+        authState = AuthStateUtil.readAuthState(this)
 
         // Init views
         recommendationRequest = findViewById(R.id.request_recommendations)
         recommendationText = findViewById(R.id.recommendations_text)
         recommendationSV = findViewById(R.id.recommendations_scroll_view)
-        loadingIndicator = findViewById(R.id.loading_indicator)
+        loadingContainer = findViewById(R.id.loading_container)
         successLayout = findViewById(R.id.success_layout)
         failureLayout = findViewById(R.id.failure_layout)
 
@@ -101,29 +106,34 @@ class Recommendations : AppCompatActivity() {
     private fun fetchRecommendations() {
         runOnUiThread {
             setSuccessAndFailureVisibility(View.GONE, View.GONE) // Hide success/failure layouts
-            loadingIndicator.visibility = View.VISIBLE // Hide loading indicator
+            loadingContainer.visibility = View.VISIBLE // Hide loading indicator
             recommendationRequest.isEnabled = false // Stop user from making more requests
             recommendationRequest.text = getString(R.string.loading_text)
         }
 
-        // Get recommendation from the /recommendation endpoint on the backend
-        getUserInfo(accessToken) { userExists, userInfo ->
-            userInfo.takeIf { userExists }?.let {
-                dispatchRecommendationRequest(it) { hasText, responseData ->
-                    responseData.takeIf { hasText }?.let { data ->
-                        runOnUiThread {
-                            processRecommendationText(data)
+        TokenStateUtil.checkAndRenewAccessToken(this, authState, authService) { _ ->
+            val accessToken = authState.accessToken
+            accessToken?.let {
+                // Get recommendation from the /recommendation endpoint on the backend
+                UserInfoUtil.getUserInfo(this, accessToken, client) { userExists, userInfo ->
+                    userInfo.takeIf { userExists }?.let {
+                        dispatchRecommendationRequest(it) { hasText, responseData ->
+                            responseData.takeIf { hasText }?.let { data ->
+                                runOnUiThread {
+                                    processRecommendationText(data)
 
-                            // Re-enable "Get Recommendations" button
-                            loadingIndicator.visibility = View.GONE
-                            recommendationRequest.isEnabled = true
-                            recommendationRequest.text = getString(R.string.get_recommendations_text)
+                                    // Re-enable "Get Recommendations" button
+                                    loadingContainer.visibility = View.GONE
+                                    recommendationRequest.isEnabled = true
+                                    recommendationRequest.text = getString(R.string.get_recommendations_text)
 
-                            onRecommendationRequestSuccess() // Handle successful response
+                                    onRecommendationRequestSuccess() // Handle successful response
+                                }
+                            } ?: runOnUiThread { onRecommendationRequestFailure() } // Handle failure response
                         }
-                    } ?: runOnUiThread { onRecommendationRequestFailure() } // Handle failure response
+                    } ?: Log.e(TAG, "getUserInfo: Failure! User does not exist")
                 }
-            } ?: Log.e(TAG, "getUserInfo: Failure! User does not exist")
+            }
         }
     }
 
@@ -156,7 +166,7 @@ class Recommendations : AppCompatActivity() {
     private fun onRecommendationRequestFailure() {
         setSuccessAndFailureVisibility(successVisibility = View.GONE, failureVisibility = View.VISIBLE)
 
-        loadingIndicator.visibility = View.GONE
+        loadingContainer.visibility = View.GONE
         recommendationRequest.isEnabled = true
         recommendationRequest.text = getString(R.string.retry_text) // Change the text to retry
 
@@ -173,28 +183,16 @@ class Recommendations : AppCompatActivity() {
         val profileButton = findViewById<FrameLayout>(R.id.profile_button)
         homepageButton.setOnClickListener {
             val intent = Intent(this, HomePage::class.java)
-            intent.putExtra(
-                "ACCESS_TOKEN",
-                accessToken
-            ) // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
         }
         trackingButton.setOnClickListener {
             val intent = Intent(this, Tracking::class.java)
-            intent.putExtra(
-                "ACCESS_TOKEN",
-                accessToken
-            ) // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
         }
         profileButton.setOnClickListener {
             val intent = Intent(this, UserProfile::class.java)
-            intent.putExtra(
-                "ACCESS_TOKEN",
-                accessToken
-            ) // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
         }
@@ -324,37 +322,8 @@ class Recommendations : AppCompatActivity() {
         })
     }
 
-    private fun getUserInfo(accessToken: String, onResult: (Boolean, String?) -> Unit) {
-        val url = getString(R.string.DIET_ADVISOR_USER_ENDPOINT_URL)
-
-        val request = Request.Builder()
-            .url(url)
-            .addHeader("Authorization", "Bearer $accessToken")
-            .get() // GET request to retrieve user data
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                e.printStackTrace()
-                onResult(false, null)
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    // Handle the response
-                    val responseBody = response.body?.string()
-                    println(responseBody)
-                    // Here, you might want to parse the JSON response to a UserData object using Gson
-                    Log.d(TAG, "onResponse: Success! Retrieved user information!")
-                    onResult(true, responseBody)
-                } else {
-                    // Handle the error
-                    println("Request failed: ${response.message}")
-                    Log.d(TAG, "onResponse: Failure! No User to Retrieve!")
-                    onResult(false, null)
-                }
-            }
-        })
+    companion object {
+        const val TAG = "Recommendations"
     }
 }
 

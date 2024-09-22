@@ -96,9 +96,17 @@
 
     <!--For Google Sign-In-->
     <string name="WEB_CLIENT_ID" translatable="false">908769963821-nfcfmbdtifcc0s1ta3secu4hppq1hra7.apps.googleusercontent.com</string>
+    <string name="ANDROID_CLIENT_ID" translatable="false">908769963821-8hcd506sl9obet9u6ki61mahs9bclj5i.apps.googleusercontent.com</string>
+    <string name="GOOGLE_REDIRECT_URI" translatable="false">com.googleusercontent.apps.908769963821-8hcd506sl9obet9u6ki61mahs9bclj5i:/oauth2redirect</string>
+    <string name="GOOGLE_AUTHORIZATION_ENDPOINT" translatable="false">https://accounts.google.com/o/oauth2/v2/auth</string>
+    <string name="GOOGLE_TOKEN_ENDPOINT" translatable="false">https://www.googleapis.com/oauth2/v4/token</string>
+
     <string name="DIET_ADVISOR_USER_ENDPOINT_URL" translatable="false">https://diet.kencs.net/user</string>
     <string name="DIET_ADVISOR_YOLO_ENDPOINT_URL" translatable="false">https://diet.kencs.net/yolo</string>
     <string name="DIET_ADVISOR_CALORIE_ENDPOINT_URL" translatable="false">https://diet.kencs.net/calorie</string>
     <string name="DIET_ADVISOR_RECOMMENDATION_ENDPOINT_URL" translatable="false">https://diet.kencs.net/recommendation</string>
+
+    <string name="token_preferences_file">token_prefs</string>
+    <string name="refresh_token_key">refresh_token</string>
 
 </resources>

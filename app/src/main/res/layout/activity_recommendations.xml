@@ -99,17 +99,25 @@
             android:paddingBottom="8dp" />
     </ScrollView>
 
-    <!-- Progress Bar -->
-    <ProgressBar
-        android:id="@+id/loading_indicator"
+    <!-- FrameLayout for Progress Bar -->
+    <FrameLayout
+        android:id="@+id/loading_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/request_recommendations"
-        app:layout_constraintBottom_toTopOf="@id/navigation_bar" />
+        app:layout_constraintBottom_toTopOf="@id/navigation_bar">
+
+        <!-- Progress Bar inside FrameLayout -->
+        <ProgressBar
+            android:id="@+id/loading_indicator"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_gravity="center"
+            android:visibility="visible" />
+    </FrameLayout>
 
     <!-- Success Layout -->
     <FrameLayout

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.FrameLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -21,6 +22,11 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.materialswitch.MaterialSwitch
+import com.kkt.dietadvisor.utility.AuthStateUtil
+import com.kkt.dietadvisor.utility.TokenStateUtil
+import com.kkt.dietadvisor.utility.UserInfoUtil
+import net.openid.appauth.AuthState
+import net.openid.appauth.AuthorizationService
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -36,7 +42,9 @@ import java.util.concurrent.TimeUnit
 
 class Tracking : AppCompatActivity() {
 
-    private lateinit var accessToken: String
+    private lateinit var authState: AuthState
+    private lateinit var authService: AuthorizationService
+
     private lateinit var jsonString: String
 
     private lateinit var btnDatePicker: Button
@@ -73,22 +81,27 @@ class Tracking : AppCompatActivity() {
             insets
         }
 
-        // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
-        // Retrieve access token from the intent extras
-        accessToken = intent.getStringExtra("ACCESS_TOKEN")
-            ?: throw IllegalArgumentException("Access token is missing from the intent")
-        Log.d(TAG, "onCreate: Access Token Retrieved: $accessToken")
+        // Initialize AuthorizationService & AuthState
+        authService = AuthorizationService(this)
+        authState = AuthStateUtil.readAuthState(this)
 
-        // Retrieve the user info from network request
-        getUserInfo(accessToken) { userExists, userInfo ->
-            if (userExists) {
-                userInfo?.let {
-                    Log.d(TAG, "getUserInfoCallback: Successfully retrieved user info")
-                    println(userInfo)
-                    jsonString = userInfo
+        TokenStateUtil.checkAndRenewAccessToken(this, authState, authService) { _ ->
+            val accessToken = authState.accessToken
+            accessToken?.let {
+                // Retrieve the user info from network request
+                UserInfoUtil.getUserInfo(this, accessToken, client) { userExists, userInfo ->
+                    if (userExists) {
+                        userInfo?.let {
+                            Log.d(TAG, "getUserInfoCallback: Successfully retrieved user info")
+                            println(userInfo)
+
+                            loadGreetingText(userInfo)
+                            jsonString = userInfo
+                        }
+                    } else {
+                        Log.e(TAG, "getUserInfoCallback: Failure! User does not exist")
+                    }
                 }
-            } else {
-                Log.e(TAG, "getUserInfoCallback: Failure! User does not exist")
             }
         }
 
@@ -140,7 +153,6 @@ class Tracking : AppCompatActivity() {
 
         homeButton.setOnClickListener {
             val intent = Intent(this, HomePage::class.java)
-            intent.putExtra("ACCESS_TOKEN", accessToken) // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
 
@@ -148,50 +160,15 @@ class Tracking : AppCompatActivity() {
 
         recommendationsButton.setOnClickListener {
             val intent = Intent(this, Recommendations::class.java)
-            intent.putExtra("ACCESS_TOKEN", accessToken) // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
         }
 
         profileButton.setOnClickListener {
             val intent = Intent(this, UserProfile::class.java)
-            intent.putExtra("ACCESS_TOKEN", accessToken) // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
         }
-    }
-
-    private fun getUserInfo(accessToken: String, onResult: (Boolean, String?) -> Unit) {
-        val url = getString(R.string.DIET_ADVISOR_USER_ENDPOINT_URL)
-
-        val request = Request.Builder()
-            .url(url)
-            .addHeader("Authorization", "Bearer $accessToken")
-            .get() // GET request to retrieve user data
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                e.printStackTrace()
-                onResult(false, null)
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    // Handle the response
-                    val responseBody = response.body?.string()
-                    println(responseBody)
-                    // Here, you might want to parse the JSON response to a UserData object using Gson
-                    Log.d(TAG, "onResponse: Success! Retrieved user information!")
-                    onResult(true, responseBody)
-                } else {
-                    // Handle the error
-                    println("Request failed: ${response.message}")
-                    Log.d(TAG, "onResponse: Failure! No User to Retrieve!")
-                    onResult(false, null)
-                }
-            }
-        })
     }
 
     private fun loadUserInfo(startDate: String, endDate: String, jsonString: String): List<IntakeData> {
@@ -199,6 +176,7 @@ class Tracking : AppCompatActivity() {
 
         try {
             val jsonObject = JSONObject(jsonString)
+
             val intakeArray = jsonObject.getJSONArray("intakeHistory")
 
             val dateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
@@ -235,6 +213,23 @@ class Tracking : AppCompatActivity() {
         }
 
         return intakeDataList
+    }
+
+    private fun loadGreetingText(jsonString: String) {
+        val jsonObject = JSONObject(jsonString)
+
+        // Extract the userName from the personalInfo object
+        val personalInfo = jsonObject.getJSONObject("personalInfo")
+        val userName = personalInfo.getString("userName")
+
+        // Find the TextView by ID (assuming it's the 'header' TextView in your layout)
+        val trackingGreetingText = findViewById<TextView>(R.id.tracking_greeting_text)
+
+        // Set the greeting message with the user's name
+        val greetingMessage = "$userName, let's see your eating pattern!"
+        runOnUiThread {
+            trackingGreetingText.text = greetingMessage
+        }
     }
 
     private fun updateBarChart(intakeData: List<IntakeData>) {
@@ -374,6 +369,10 @@ class Tracking : AppCompatActivity() {
 
         barChart.animateY(1000)
         barChart.invalidate()
+    }
+
+    companion object {
+        const val TAG = "Tracking"
     }
 }
 

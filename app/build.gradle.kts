@@ -21,10 +21,16 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        manifestPlaceholders["appAuthRedirectScheme"] = "com.googleusercontent.apps.908769963821-8hcd506sl9obet9u6ki61mahs9bclj5i"
     }
 
     buildTypes {
+        debug {
+            isDebuggable = true
+        }
         release {
+            isDebuggable = false
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -102,17 +108,20 @@ dependencies {
     // Glide Image Loader
     implementation (libs.glide)
 
-    // Markwon Markdown Renderer
-    kapt("io.noties:prism4j-bundler:2.0.0")
-    implementation("io.noties.markwon:core:4.6.2")
-    implementation ("io.noties.markwon:image:4.6.2")
-    implementation ("io.noties.markwon:recycler:4.6.2")
-    implementation("io.noties.markwon:syntax-highlight:4.6.2") {
-        exclude(group = "org.jetbrains", module = "annotations-java5")
-    }
+    // AppAuth Library
+    implementation (libs.appauth)
 
     // Encrypted Shared Prefs
     implementation (libs.androidx.security.crypto)
+
+    // Markwon Markdown Renderer
+    kapt(libs.prism4j.bundler)
+    implementation(libs.core)
+    implementation (libs.image)
+    implementation (libs.recycler)
+    implementation("io.noties.markwon:syntax-highlight:4.6.2") {
+        exclude(group = "org.jetbrains", module = "annotations-java5")
+    }
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

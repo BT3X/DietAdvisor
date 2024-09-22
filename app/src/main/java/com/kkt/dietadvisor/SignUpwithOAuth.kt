@@ -22,6 +22,10 @@ import com.kkt.dietadvisor.models.DietaryInfo
 import com.kkt.dietadvisor.models.NutritionalInfo
 import com.kkt.dietadvisor.models.PersonalInfo
 import com.kkt.dietadvisor.models.UserData
+import com.kkt.dietadvisor.utility.AuthStateUtil
+import com.kkt.dietadvisor.utility.TokenStateUtil
+import net.openid.appauth.AuthState
+import net.openid.appauth.AuthorizationService
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaType
@@ -37,7 +41,8 @@ import java.util.Locale
 
 class SignUpwithOAuth : AppCompatActivity() {
 
-    private lateinit var accessToken: String
+    private lateinit var authService: AuthorizationService
+    private lateinit var authState: AuthState
 
     private val client: OkHttpClient by lazy {
         val logging = HttpLoggingInterceptor()
@@ -58,10 +63,9 @@ class SignUpwithOAuth : AppCompatActivity() {
             insets
         }
 
-        // Retrieve access token from the intent extras
-        accessToken = intent.getStringExtra("ACCESS_TOKEN")
-            ?: throw IllegalArgumentException("Access token is missing from the intent")
-        Log.d(TAG, "onCreate: Access Token Retrieved: $accessToken")
+        // Initialize AuthorizationService & AuthState
+        authService = AuthorizationService(this)
+        authState = AuthStateUtil.readAuthState(this)
 
         // Init normal layout views
         val dob = findViewById<EditText>(R.id.dob)
@@ -121,91 +125,93 @@ class SignUpwithOAuth : AppCompatActivity() {
 
         val saveButton = findViewById<Button>(R.id.save_button)
         saveButton.setOnClickListener {
+            // Check and refresh access token before making API call
+            TokenStateUtil.checkAndRenewAccessToken(this, authState, authService) { _ ->
+                // Access token should now be valid
+                val accessToken = authState.accessToken
+                accessToken?.let {
+                    getGoogleUserInfo(accessToken, object : UserInfoCallback {
+                        override fun onUserInfoRetrieved(googleUserInfo: GoogleUserInfo) {
+                            val (userID, username) = googleUserInfo
 
-            // Get user info
-            getGoogleUserInfo(accessToken, object : UserInfoCallback {
-                override fun onUserInfoRetrieved(googleUserInfo: GoogleUserInfo) {
-                    val (userID, username) = googleUserInfo
+                            // Gather user input data
+                            val birthDate = dob.text.toString()
+                            val gender = genderDropdown.text.toString()
+                            val language = languageDropdown.text.toString()
+                            val height = findViewById<EditText>(R.id.height).text.toString().toDoubleOrNull() ?: 0.0
+                            val weight = findViewById<EditText>(R.id.weight).text.toString().toDoubleOrNull() ?: 0.0
+                            val physicalActivity = activityDropdown.text.toString()
+                            val dietaryGoal = dietGoalDropdown.text.toString()
+                            val dietaryGoalAmount = 0.0
+                            val carb = 0.0
+                            val protein = 0.0
+                            val fat = 0.0
+                            val calorie = 0.0
 
-                    // Gather user input data
-                    val birthDate = dob.text.toString()
-                    val gender = genderDropdown.text.toString()
-                    val language = languageDropdown.text.toString()
-                    val height = findViewById<EditText>(R.id.height).text.toString().toDoubleOrNull() ?: 0.0
-                    val weight = findViewById<EditText>(R.id.weight).text.toString().toDoubleOrNull() ?: 0.0
-                    val physicalActivity = activityDropdown.text.toString()
-                    val dietaryGoal = dietGoalDropdown.text.toString()
-                    val dietaryGoalAmount = 0.0
-                    val carb = 0.0
-                    val protein = 0.0
-                    val fat = 0.0
-                    val calorie = 0.0
+                            // Calculate TMR and TDEE
+                            val (TMR, TDEE) = calculateTMRandTDEE(
+                                gender = gender,
+                                birthDate = birthDate,
+                                weight = weight,
+                                height = height,
+                                physicalActivity = physicalActivity,
+                                weightOptionAmount = dietaryGoalAmount
+                            )
 
-                    // Calculate TMR and TDEE
-                    val (TMR, TDEE) = calculateTMRandTDEE(
-                        gender = gender,
-                        birthDate = birthDate,
-                        weight = weight,
-                        height = height,
-                        physicalActivity = physicalActivity,
-                        weightOptionAmount = dietaryGoalAmount
-                    )
+                            // Build the UserData object
+                            val userData = UserData(
+                                personalInfo = PersonalInfo(
+                                    userID = userID,
+                                    userName = username,
+                                    birthDate = birthDate,
+                                    gender = gender,
+                                    language = language
+                                ),
+                                bodyMeasurements = BodyMeasurements(
+                                    weight = weight,
+                                    height = height,
+                                    physicalActivity = physicalActivity.toDoubleOrNull() ?: 0.0
+                                ),
+                                dietaryInfo = DietaryInfo(
+                                    dietaryGoal = dietaryGoal,
+                                    dietaryGoalAmount = dietaryGoalAmount,
+                                    TMR = TMR,
+                                    TDEE = TDEE
+                                ),
+                                intakeHistory = emptyList(),
+                                lastMeal = NutritionalInfo(
+                                    carb = carb,
+                                    protein = protein,
+                                    fat = fat,
+                                    calorie = calorie,
+                                )
+                            )
 
-                    // Build the UserData object
-                    val userData = UserData(
-                        personalInfo = PersonalInfo(
-                            userID = userID,
-                            userName = username,
-                            birthDate = birthDate,
-                            gender = gender,
-                            language = language
-                        ),
-                        bodyMeasurements = BodyMeasurements(
-                            weight = weight,
-                            height = height,
-                            physicalActivity = physicalActivity.toDoubleOrNull() ?: 0.0
-                        ),
-                        dietaryInfo = DietaryInfo(
-                            dietaryGoal = dietaryGoal,
-                            dietaryGoalAmount = dietaryGoalAmount,
-                            TMR = TMR,
-                            TDEE = TDEE
-                        ),
-                        intakeHistory = emptyList(),
-                        lastMeal = NutritionalInfo(
-                            carb = carb,
-                            protein = protein,
-                            fat = fat,
-                            calorie = calorie,
-                        )
-                    )
-
-                    // Make Http Request to backend to create user
-                    createUser(accessToken, userData) { userCreated ->
-                        if (userCreated) {
-                            runOnUiThread {
-                                Log.d(TAG, "onUserInfoRetrieved: User Created Successfully!")
-                                Toast.makeText(this@SignUpwithOAuth, "User Created Successfully!", Toast.LENGTH_SHORT).show()
-                                Toast.makeText(this@SignUpwithOAuth, "Welcome to Diet Advisor!", Toast.LENGTH_SHORT).show()
-
-                                val intent = Intent(this@SignUpwithOAuth, HomePage::class.java)
-                                intent.putExtra("ACCESS_TOKEN", accessToken) // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
-                                startActivity(intent)
-                            }
-                        } else {
-                            runOnUiThread {
-                                Log.d(TAG, "onUserInfoRetrieved: User Creation Failure!")
-                                Toast.makeText(this@SignUpwithOAuth, "Something went wrong!", Toast.LENGTH_SHORT).show()
+                            // Make Http Request to backend to create user
+                            createUser(accessToken, userData) { userCreated ->
+                                if (userCreated) {
+                                    runOnUiThread {
+                                        Log.d(TAG, "onUserInfoRetrieved: User Created Successfully!")
+                                        Toast.makeText(this@SignUpwithOAuth, "User Created Successfully!", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(this@SignUpwithOAuth, "Welcome to Diet Advisor!", Toast.LENGTH_SHORT).show()
+                                        startActivity(Intent(this@SignUpwithOAuth, HomePage::class.java))
+                                        finish() // Prevent back navigation to the sign-up screen
+                                    }
+                                } else {
+                                    runOnUiThread {
+                                        Log.d(TAG, "onUserInfoRetrieved: User Creation Failure!")
+                                        Toast.makeText(this@SignUpwithOAuth, "Something went wrong!", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
                             }
                         }
-                    }
-                }
 
-                override fun onError(error: String) {
-                    Log.e(TAG, "onError: Error: $error", )
+                        override fun onError(error: String) {
+                            Log.e(Companion.TAG, "onError: Error: $error", )
+                        }
+                    })
                 }
-            })
-
+            }
         }
     }
 
@@ -357,6 +363,10 @@ class SignUpwithOAuth : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    companion object {
+        const val TAG = "SignUpWitOAuth"
     }
 }
 

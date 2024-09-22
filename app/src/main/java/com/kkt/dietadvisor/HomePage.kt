@@ -19,7 +19,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.kkt.dietadvisor.utility.AuthStateUtil
+import com.kkt.dietadvisor.utility.TokenStateUtil
+import com.kkt.dietadvisor.utility.UserInfoUtil
 import ir.mahozad.android.PieChart
+import net.openid.appauth.AuthState
+import net.openid.appauth.AuthorizationService
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -37,10 +42,12 @@ import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 
+
 class HomePage : AppCompatActivity() {
 
     private lateinit var currentPhotoPath: String
-    private lateinit var accessToken: String
+    private lateinit var authState: AuthState
+    private lateinit var authService: AuthorizationService
 
     private val client: OkHttpClient by lazy {
         val logging = HttpLoggingInterceptor()
@@ -64,11 +71,9 @@ class HomePage : AppCompatActivity() {
             insets
         }
 
-        // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
-        // Retrieve access token from the intent extras
-        accessToken = intent.getStringExtra("ACCESS_TOKEN")
-            ?: throw IllegalArgumentException("Access token is missing from the intent")
-        Log.d(TAG, "onCreate: Access Token Retrieved: $accessToken")
+        // Initialize AuthorizationService & AuthState
+        authService = AuthorizationService(this)
+        authState = AuthStateUtil.readAuthState(this)
 
         // Init views
         val trackingButton = findViewById<FrameLayout>(R.id.tracking_button)
@@ -91,67 +96,35 @@ class HomePage : AppCompatActivity() {
         /* Navigation Related */
         trackingButton.setOnClickListener {
             val intent = Intent(this, Tracking::class.java)
-            intent.putExtra("ACCESS_TOKEN", accessToken) // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
         }
         recommendationsButton.setOnClickListener {
             val intent = Intent(this, Recommendations::class.java)
-            intent.putExtra("ACCESS_TOKEN", accessToken) // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
         }
         profileButton.setOnClickListener {
             val intent = Intent(this, UserProfile::class.java)
-            intent.putExtra("ACCESS_TOKEN", accessToken) // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
         }
 
         // Get user info from backend and load into UI
-        getUserInfo(accessToken) { userExists, userInfo ->
-            if (userExists) {
-                userInfo?.let {
-                    Log.d(TAG, "onCreate: Loading UI with user info...")
-                    loadUserInfo(jsonString = userInfo)
+        TokenStateUtil.checkAndRenewAccessToken(this, authState, authService) { _ ->
+            val accessToken = authState.accessToken
+            accessToken?.let {
+                UserInfoUtil.getUserInfo(this, accessToken, client) { userExists, userInfo ->
+                    if (userExists) {
+                        userInfo?.let {
+                            Log.d(TAG, "onCreate: Loading UI with user info...")
+                            loadUserInfo(jsonString = userInfo)
+                        }
+                    } else {
+                        Log.e(TAG, "getUserInfoCallback: Failure! User does not exist", ) }
                 }
-            } else {
-                Log.e(TAG, "getUserInfoCallback: Failure! User does not exist", )
             }
         }
-    }
-
-    private fun getUserInfo(accessToken: String, onResult: (Boolean, String?) -> Unit) {
-        val url = getString(R.string.DIET_ADVISOR_USER_ENDPOINT_URL)
-
-        val request = Request.Builder()
-            .url(url)
-            .addHeader("Authorization", "Bearer $accessToken")
-            .get() // GET request to retrieve user data
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                e.printStackTrace()
-                onResult(false, null)
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    // Handle the response
-                    val responseBody = response.body?.string()
-                    println(responseBody)
-                    // Here, you might want to parse the JSON response to a UserData object using Gson
-                    Log.d(TAG, "onResponse: Success! Retrieved user information!")
-                    onResult(true, responseBody)
-                } else {
-                    // Handle the error
-                    println("Request failed: ${response.message}")
-                    Log.d(TAG, "onResponse: Failure! No User to Retrieve!")
-                    onResult(false, null)
-                }
-            }
-        })
     }
 
     private fun createImageFile(): File {
@@ -218,7 +191,6 @@ class HomePage : AppCompatActivity() {
                     // Send the captured image's uri to the RecognitionResult activity
                     Log.d(TAG, "Starting RecognitionResult with PHOTO_URI: $capturedImageUri")
                     val intent = Intent(this, RecognitionResult::class.java)
-                    intent.putExtra("ACCESS_TOKEN", accessToken) // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
                     intent.putExtra("RECOGNITION_RESULTS", recognitionResults)
                     intent.putExtra("URI_STRING", capturedImageUri.toString())
                     startActivity(intent)
@@ -261,7 +233,6 @@ class HomePage : AppCompatActivity() {
 
                     // Send to RecognitionResult activity
                     val intent = Intent(this, RecognitionResult::class.java)
-                    intent.putExtra("ACCESS_TOKEN", accessToken) // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
                     intent.putExtra("RECOGNITION_RESULTS", recognitionResults)
                     intent.putExtra("URI_STRING", selectedImageUri.toString())
                     startActivity(intent)
@@ -334,6 +305,19 @@ class HomePage : AppCompatActivity() {
     private fun loadUserInfo(jsonString: String) {
         try {
             val jsonObject = JSONObject(jsonString)
+
+            // Extract user name from the personalInfo object
+            val personalInfo = jsonObject.getJSONObject("personalInfo")
+            val userName = personalInfo.getString("userName")
+
+            // Find the TextView by ID
+            val headerTextView = findViewById<TextView>(R.id.user_greeting_text)
+
+            // Set the greeting message with the user's name
+            val greetingMessage = "Hello $userName!"
+            runOnUiThread {
+                headerTextView.text = greetingMessage
+            }
 
             val intakeHistory = jsonObject.getJSONArray("intakeHistory")
 
@@ -449,6 +433,10 @@ class HomePage : AppCompatActivity() {
         }
 
         infoText.text = "${consumed.toInt()}$unit\n${(percentage * 100).toInt()}%"
+    }
+
+    companion object {
+        const val TAG = "HomePage"
     }
 }
 

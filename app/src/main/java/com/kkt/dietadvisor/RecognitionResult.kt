@@ -47,7 +47,6 @@ class RecognitionResult : AppCompatActivity() {
 
     private lateinit var foodItems : List<FoodItem>
     private lateinit var photoUri: Uri
-    private lateinit var accessToken: String
 
     private val client: OkHttpClient by lazy {
         val logging = HttpLoggingInterceptor()
@@ -71,17 +70,6 @@ class RecognitionResult : AppCompatActivity() {
             insets
         }
 
-        /*
-        TODO:
-            Main work flow:
-            /yolo -> {DET.json} -> /calorie -> /user [PUT] (Update)
-        */
-        // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
-        // Retrieve access token from the intent extras
-        accessToken = intent.getStringExtra("ACCESS_TOKEN")
-            ?: throw IllegalArgumentException("Access token is missing from the intent")
-        Log.d(TAG, "onCreate: Access Token Retrieved: $accessToken")
-
         // Retrieve the recognition results items from the intent extras
         val recognitionResults = intent.getStringExtra("RECOGNITION_RESULTS")
             ?: throw IllegalArgumentException("Recognition Results are missing from the intent")
@@ -92,7 +80,7 @@ class RecognitionResult : AppCompatActivity() {
 
         // Convert back to Uri from string
         photoUri = uriString.let { Uri.parse(it) }
-        Log.d(TAG, "onCreate: Photo Uri Retrieved: $photoUri")
+        Log.d(Companion.TAG, "onCreate: Photo Uri Retrieved: $photoUri")
 
         // Load retrieved Uri into image view
         val resultImageView = findViewById<ImageView>(R.id.result_image)
@@ -193,7 +181,6 @@ class RecognitionResult : AppCompatActivity() {
 
                     //  Send to the AnalysisResult activity
                     val intent = Intent(this@RecognitionResult, AnalysisResult::class.java)
-                    intent.putExtra("ACCESS_TOKEN", accessToken)
                     intent.putExtra("ANALYSIS_RESULTS", analysisResults)
                     intent.putExtra("URI_STRING", photoUri.toString())
                     startActivity(intent)
@@ -234,7 +221,7 @@ class RecognitionResult : AppCompatActivity() {
                 client.newCall(it).enqueue(object : Callback {
                     override fun onFailure(call: Call, e: IOException) {
                         runOnUiThread {
-                            Log.e(TAG, "onFailure: Request Failed: ${e.message}")
+                            Log.e(Companion.TAG, "onFailure: Request Failed: ${e.message}")
                             e.printStackTrace()
                             onResult(false, null)
                         }
@@ -246,7 +233,7 @@ class RecognitionResult : AppCompatActivity() {
                             response.body?.let { responseBody ->
                                 runOnUiThread {
                                     val jsonResponse = responseBody.string()
-                                    Log.d(TAG, "onResponse: Viewing JSON Response")
+                                    Log.d(Companion.TAG, "onResponse: Viewing JSON Response")
                                     println(jsonResponse)
 
                                     /* Perform nutrition quantity conversion */
@@ -272,15 +259,15 @@ class RecognitionResult : AppCompatActivity() {
                                     val finalizedNutritionData = analyzedFoodItems.mapNotNull { item ->
                                         val nutritionFacts = nutritionMap[item.name]
                                         nutritionFacts?.let {
-                                            Log.d(TAG, "Item mass for ${item.name}: ${item.mass}")
+                                            Log.d(Companion.TAG, "Item mass for ${item.name}: ${item.mass}")
                                             Log.d(
-                                                TAG,
+                                                Companion.TAG,
                                                 "Serving size for ${item.name}: ${nutritionFacts.serving_size}"
                                             )
 
                                             val factor = item.mass / nutritionFacts.serving_size
 
-                                            Log.d(TAG, "Factor Calculated for ${item.name}: $factor")
+                                            Log.d(Companion.TAG, "Factor Calculated for ${item.name}: $factor")
 
                                             val calculatedNutritionData = CalculatedNutritionData(
                                                 calories = nutritionFacts.energy * factor,
@@ -298,7 +285,7 @@ class RecognitionResult : AppCompatActivity() {
 
                                     // Convert result back to JSON
                                     val currentMealNutritionFacts = gson.toJson(finalizedNutritionData)
-                                    Log.d(TAG, "onResponse: Current Meal Nutrition Facts Calculated!")
+                                    Log.d(Companion.TAG, "onResponse: Current Meal Nutrition Facts Calculated!")
                                     println(currentMealNutritionFacts)
 
                                     // Send back the currentMealNutritionFacts to the caller
@@ -310,7 +297,7 @@ class RecognitionResult : AppCompatActivity() {
                         }
                         } else {
                             runOnUiThread {
-                                Log.e(TAG, "onResponse: Request Failed: ${response.message}")
+                                Log.e(Companion.TAG, "onResponse: Request Failed: ${response.message}")
                                 onResult(false, null)
                             }
                         }
@@ -365,5 +352,9 @@ class RecognitionResult : AppCompatActivity() {
             e.printStackTrace()
             jsonData // Return original JSON String in case of error
         }
+    }
+
+    companion object {
+        const val TAG = "RecognitionResult"
     }
 }

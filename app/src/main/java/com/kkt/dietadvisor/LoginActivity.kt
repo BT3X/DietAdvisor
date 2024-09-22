@@ -1,6 +1,7 @@
 package com.kkt.dietadvisor
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
@@ -14,42 +15,32 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.credentials.CredentialManager
-import androidx.credentials.CredentialOption
-import androidx.credentials.GetCredentialRequest
-import androidx.credentials.exceptions.GetCredentialException
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
-import com.google.android.gms.auth.api.identity.AuthorizationRequest
-import com.google.android.gms.auth.api.identity.AuthorizationResult
-import com.google.android.gms.auth.api.identity.Identity
-import com.google.android.gms.common.api.Scope
-import com.google.android.libraries.identity.googleid.GetGoogleIdOption
-import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
-import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
-import com.kkt.dietadvisor.models.AccountInfo
-import okhttp3.Call
-import okhttp3.Callback
+import com.kkt.dietadvisor.utility.AuthStateUtil
+import com.kkt.dietadvisor.utility.TokenStateUtil
+import com.kkt.dietadvisor.utility.UserInfoUtil
+import net.openid.appauth.AuthState
+import net.openid.appauth.AuthorizationException
+import net.openid.appauth.AuthorizationRequest
+import net.openid.appauth.AuthorizationResponse
+import net.openid.appauth.AuthorizationService
+import net.openid.appauth.AuthorizationServiceConfiguration
+import net.openid.appauth.ResponseTypeValues
 import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
-import java.io.IOException
-import java.security.MessageDigest
-import java.util.UUID
 
-const val TAG = "LoginActivity"
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var authorizationLauncher: ActivityResultLauncher<IntentSenderRequest>
+    private lateinit var authService: AuthorizationService
+    private lateinit var authState: AuthState
+    private lateinit var authorizationLauncher: ActivityResultLauncher<Intent>
 
     private val client: OkHttpClient by lazy {
         val logging = HttpLoggingInterceptor()
@@ -70,15 +61,20 @@ class LoginActivity : AppCompatActivity() {
             insets
         }
 
+        // Initialize AuthorizationService & AuthState
+        authService = AuthorizationService(this)
+        authState = AuthStateUtil.readAuthState(this)
+
+        // Attempt silent login
+        attemptSilentLogin()
+
         // Initialize the authorizationLauncher
         authorizationLauncher = registerForActivityResult(
-            ActivityResultContracts.StartIntentSenderForResult()
+            ActivityResultContracts.StartActivityForResult()
         ) { activityResult ->
-            Log.d(TAG, "onCreate: activityResult Code: $activityResult")
+            Log.d(TAG, "Activity Result Code: $activityResult")
             if (activityResult.resultCode == RESULT_OK) {
-                val authorizationResponse = Identity.getAuthorizationClient(this)
-                    .getAuthorizationResultFromIntent(activityResult.data)
-                handleAuthorizationResult(authorizationResponse)
+                handleAuthorizationResult(activityResult)
             } else {
                 Log.e("Authorization", "Authorization failed or was cancelled.")
             }
@@ -90,155 +86,136 @@ class LoginActivity : AppCompatActivity() {
 
         val signIn = findViewById<LinearLayout>(R.id.sign_in_google)
         signIn.setOnClickListener {
-            startInteractiveAuthorization()
-        }
-    }
-
-    private fun startInteractiveAuthorization() {
-        // Build the authorization request with necessary scopes
-        val authorizationRequest = AuthorizationRequest.Builder()
-            .requestOfflineAccess(getString(R.string.WEB_CLIENT_ID), true)
-            .setRequestedScopes(
-                listOf(
-                    Scope("https://www.googleapis.com/auth/userinfo.email"),
-                    Scope("https://www.googleapis.com/auth/userinfo.profile"),
-                    Scope("openid")
-                )
-            )
-            .build()
-
-        // Start the authorization process
-        Identity.getAuthorizationClient(this)
-            .authorize(authorizationRequest)
-            .addOnSuccessListener { authorizationResult ->
-                if (authorizationResult.hasResolution()) {
-                    authorizationResult.pendingIntent?.intentSender?.let { intentSender ->
-                        val intentSenderRequest = IntentSenderRequest.Builder(intentSender).build()
-                        authorizationLauncher.launch(intentSenderRequest)
-                    }
-                } else {
-                    handleAuthorizationResult(authorizationResult)
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.e("Authorization", "Authorization failed: ${exception.message}")
-                exception.printStackTrace()  // Print the stack trace to get more details
-            }
-    }
-
-    private fun handleAuthorizationResult(authorizationResult: AuthorizationResult?) {
-        authorizationResult?.let {
-            val accessToken = it.accessToken
-            if (accessToken != null) {
-                Log.d("Authorization", "Access token retrieved: $accessToken")
-                Toast.makeText(this, "Authorization Successful!", Toast.LENGTH_SHORT).show()
-                // Use the access token as needed in your app
-
-                // Make request to backend and retrieve user info
-                getUser(accessToken) { userExists ->
-                    if (userExists) { // User exists -> Move to home page
-                        runOnUiThread {
-                            Toast.makeText(this, "Welcome back to Diet Advisor!", Toast.LENGTH_SHORT).show()
-                            val intent = Intent(this, HomePage::class.java)
-                            intent.putExtra("ACCESS_TOKEN", accessToken) // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
-                            startActivity(intent)
-                        }
-                    } else { // User doesn't exist -> Move to sign up screen
-                        runOnUiThread {
-                            Log.d(TAG, "handleAuthorizationResult: Creating User Now")
-                            Toast.makeText(this, "Please create an account!", Toast.LENGTH_SHORT).show()
-                            val intent = Intent(this, SignUpwithOAuth::class.java)
-                            intent.putExtra("ACCESS_TOKEN", accessToken)
-                            startActivity(intent)
+            // Check if auth state is valid and has a valid access token
+            if (authState.isAuthorized) {
+                // Check if access token is expired and renew if necessary
+                TokenStateUtil.checkAndRenewAccessToken(this, authState, authService) { _ ->
+                    // AuthState should have a valid access token
+                    val accessToken = authState.accessToken
+                    accessToken?.let {
+                        Log.d(TAG, "Access Token: $accessToken")
+                        // Check if user exists using the existing access token
+                        UserInfoUtil.getUserInfo(this, accessToken, client) { userExists, _ ->
+                            if (userExists) {
+                                // User exists -> Move to homepage
+                                runOnUiThread {
+                                    Log.d(TAG, "User Exists, Signing In...")
+                                    Toast.makeText(this, "Welcome back!", Toast.LENGTH_SHORT).show()
+                                    startActivity(Intent(this, HomePage::class.java))
+                                    finish() // Prevent back navigation to login screen
+                                }
+                            } else {
+                                // User does not exist -> Move to sign-up screen
+                                runOnUiThread {
+                                    Log.d(TAG, "User Not Found, Prompting Sign-up...")
+                                    Toast.makeText(this, "Please sign up!", Toast.LENGTH_SHORT).show()
+                                    startActivity(Intent(this, SignUpwithOAuth::class.java))
+                                }
+                            }
                         }
                     }
                 }
             } else {
-                Log.e("Authorization", "Failed to retrieve access token.")
-                Toast.makeText(this, "Authorization Failure!", Toast.LENGTH_SHORT).show()
+                // AuthState is invalid or access token is null. Perform authorization request
+                launchAuthorizationRequest()
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Dispose of the AuthorizationService to prevent leaks
+        authService.dispose()
+    }
+
+    private fun launchAuthorizationRequest() {
+        val serviceConfig = AuthorizationServiceConfiguration(
+            Uri.parse(getString(R.string.GOOGLE_AUTHORIZATION_ENDPOINT)),  // Authorization endpoint
+            Uri.parse(getString(R.string.GOOGLE_TOKEN_ENDPOINT))           // Token endpoint
+        )
+
+        val authRequest = AuthorizationRequest.Builder(
+            serviceConfig,
+            getString(R.string.ANDROID_CLIENT_ID),              // Android Client ID
+            ResponseTypeValues.CODE,
+            Uri.parse(getString(R.string.GOOGLE_REDIRECT_URI))  // Redirect URI
+        )
+            .setScopes("openid", "profile", "email")
+            .build()
+
+        val intent = authService.getAuthorizationRequestIntent(authRequest)
+        authorizationLauncher.launch(intent)
+    }
+
+    private fun handleAuthorizationResult(authorizationResult: ActivityResult) {
+        val data = authorizationResult.data
+        val authResponse = data?.let { AuthorizationResponse.fromIntent(it) }
+        val authException = data?.let { AuthorizationException.fromIntent(it) }
+
+        authResponse?.let {
+            val tokenRequest = authResponse.createTokenExchangeRequest()
+            authService.performTokenRequest(tokenRequest) { tokenResponse, tokenException ->
+                tokenResponse?.let {
+                    val accessToken = tokenResponse.accessToken
+                    val refreshToken = tokenResponse.refreshToken
+                    Log.i(TAG, "Access token: $accessToken")
+                    Log.i(TAG, "Refresh token: $refreshToken")
+
+                    // Update Auth state and save refresh token
+                    authState.update(tokenResponse, tokenException)
+                    AuthStateUtil.writeAuthState(this, authState)
+                    TokenStateUtil.saveRefreshToken(this, refreshToken)
+
+                    // Use the access token to get the user info from the backend
+                    accessToken?.let {
+                        UserInfoUtil.getUserInfo(this, accessToken, client) { userExists, _ ->
+                            if (userExists) { // User exists -> Move to home page
+                                runOnUiThread {
+                                    Toast.makeText(this, "Welcome back to Diet Advisor!", Toast.LENGTH_SHORT).show()
+                                    startActivity(Intent(this, HomePage::class.java))
+                                    finish() // Prevent navigation back to login screen
+                                }
+                            } else { // User doesn't exist -> Move to sign up screen
+                                runOnUiThread {
+                                    Log.d(TAG, "Creating User Now")
+                                    Toast.makeText(this, "Please create an account!", Toast.LENGTH_SHORT).show()
+                                    startActivity(Intent(this, SignUpwithOAuth::class.java))
+                                }
+                            }
+                        }
+                    } ?: Log.e(TAG, "Unable to retrieve access token")
+                } ?: Log.e(TAG, "Token exchange failed: ${tokenException?.message}")
             }
         } ?: run {
-            Log.e("Authorization", "Authorization response is null.")
-            Toast.makeText(this, "Authorization Response is null!", Toast.LENGTH_SHORT).show()
+            authException?.let {
+                Log.e(TAG, "Authorization failed: ${authException.message}")
+            }
         }
     }
 
-    private fun getUser(accessToken: String, onResult: (Boolean) -> Unit) {
-        val url = getString(R.string.DIET_ADVISOR_USER_ENDPOINT_URL)
+    private fun attemptSilentLogin() {
+        // Check if we have a saved refresh token
+        val savedRefreshToken = TokenStateUtil.getRefreshToken(this)
+        savedRefreshToken?.let {
+            Log.d(TAG, "Attempting silent login using saved refresh token...")
 
-        val request = Request.Builder()
-            .url(url)
-            .addHeader("Authorization", "Bearer $accessToken")
-            .get() // GET request to retrieve user data
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                e.printStackTrace()
-                onResult(false)
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    // Handle the response
-                    val responseBody = response.body?.string()
-                    println(responseBody)
-                    // Here, you might want to parse the JSON response to a UserData object using Gson
-                    Log.d(TAG, "onResponse: Success! Retrieved user information!")
-                    onResult(true)
-                } else {
-                    // Handle the error
-                    println("Request failed: ${response.message}")
-                    Log.d(TAG, "onResponse: Failure! No User to Retrieve!")
-                    onResult(false)
+            TokenStateUtil.checkAndRenewAccessToken(this, authState, authService) { _ ->
+                val accessToken = authState.accessToken
+                accessToken?.let {
+                    Log.d(TAG, "Silent Login Success! Access Token: $accessToken")
+                    UserInfoUtil.getUserInfo(this, accessToken, client) { userExists, _ ->
+                        if (userExists) {
+                            runOnUiThread {
+                                Log.d(TAG, "User Exists!. Signing in...")
+                                Toast.makeText(this, "Logging In", Toast.LENGTH_SHORT).show()
+                                startActivity(Intent(this, HomePage::class.java ))
+                                finish() // Prevent back navigation to the login screen
+                            }
+                        }
+                    }
                 }
             }
-        })
-    }
-
-    // TODO: Probably won't be used
-    private fun saveAccountInfo(accountInfo: AccountInfo) {
-        val masterKeyAlias = MasterKey.Builder(this)
-            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-            .build()
-
-        val encryptedSharedPreferences = EncryptedSharedPreferences.create(
-            this,
-            "account_prefs",
-            masterKeyAlias,
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        )
-
-        val sharedPreferencesEditor = encryptedSharedPreferences.edit()
-        sharedPreferencesEditor.putString("user_email", accountInfo.email)
-        sharedPreferencesEditor.putString("user_id", accountInfo.userId)
-        // Add more fields as needed
-        sharedPreferencesEditor.apply() // Apply changes asynchronously
-    }
-
-    // TODO: Probably won't be used
-    private fun getStoredAccountInfo(): AccountInfo? {
-        val masterKeyAlias = MasterKey.Builder(this)
-            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-            .build()
-
-        val encryptedSharedPreferences = EncryptedSharedPreferences.create(
-            this,
-            "account_prefs",
-            masterKeyAlias,
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        )
-
-        val userEmail = encryptedSharedPreferences.getString("user_email", null)
-        val userId = encryptedSharedPreferences.getString("user_id", null)
-
-        return if (userEmail != null && userId != null) {
-            AccountInfo(email = userEmail, userId = userId)
-        } else {
-            null // Return null if account info is not available
-        }
+        } ?: Log.d(TAG, "Silent Login Failed! No stored refresh token")
     }
 
     private fun signUpRequest(signUpTextView: TextView) {
@@ -247,6 +224,7 @@ class LoginActivity : AppCompatActivity() {
 
         val clickableSpan = object : ClickableSpan() {
             override fun onClick(widget: View) {
+                // Just move to the sign-up screen
                 val intent = Intent(this@LoginActivity, SignUpwithOAuth::class.java)
                 widget.context.startActivity(intent)
             }
@@ -277,65 +255,7 @@ class LoginActivity : AppCompatActivity() {
         signUpTextView.movementMethod = LinkMovementMethod.getInstance()
     }
 
-    private fun getHashedNonce(): String {
-        // Create cryptographic nonce to increase protection against Auth attacks
-        val rawNonce = UUID.randomUUID().toString()
-        val bytes = rawNonce.toByteArray()
-        val md = MessageDigest.getInstance("SHA-256")
-        val digest = md.digest(bytes)
-        val hashedNonce = digest.fold("") { str, it -> str + "%02x".format(it) }
-        return hashedNonce
-    }
-
-    /*
-    TODO:
-        Backend must be modified to allow for best practice normal and silent sign in methods
-        (uses Google ID Token & Credential Manager)
-        Until then, the current sign in flow is using the dialog window to confirm your account
-    */
-    private suspend fun performSignIn() {
-        // Create local instance of credential manager
-        val credentialManager = CredentialManager.create(this)
-
-
-        // Step 1: Instantiate Google Sign-In Request
-        val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
-            .setFilterByAuthorizedAccounts(true)
-            .setServerClientId(getString(R.string.WEB_CLIENT_ID))
-            .setAutoSelectEnabled(true)
-            .setNonce(getHashedNonce())
-            .build()
-
-        // Step 2: Make API Request for Sign-In
-        val request: GetCredentialRequest = GetCredentialRequest.Builder()
-            .addCredentialOption(googleIdOption)
-            .build()
-
-        // Step 3: Retrieve credentials from selected user account
-        try {
-            val result = credentialManager.getCredential(this, request) // Get credential response
-            val credential = result.credential // Raw credential data from response (Needs parsing)
-            val googleIdTokenCredential = GoogleIdTokenCredential  // Parse raw data & get JWT
-                .createFrom(credential.data)
-            val googleIdToken = googleIdTokenCredential.idToken // Extract Google ID Token
-
-            Log.d(TAG, "Google ID: Token: $googleIdToken")
-
-            /*
-            TODO:
-                Send ID token to backend server for verification
-                Exchange ID Token for access token (Requires Backend Accommodation)
-                Sign-Up Documentation: https://developer.android.com/identity/sign-in/credential-manager-siwg#enable-sign-up
-                Sign-In Documentation: https://developer.android.com/identity/sign-in/credential-manager-siwg#create-sign
-                Backend Verification: https://developers.google.com/identity/gsi/web/guides/verify-google-id-token
-            */
-
-        } catch (e: GetCredentialException) {
-            Log.e(TAG, "Credential error during sign-in/sign-up: ${e.message}", e)
-            Toast.makeText(this@LoginActivity, e.message, Toast.LENGTH_SHORT).show()
-        } catch (e: GoogleIdTokenParsingException) {
-            Log.e(TAG, "ID Token parsing error: ${e.message}", e)
-            Toast.makeText(this@LoginActivity, e.message, Toast.LENGTH_SHORT).show()
-        }
+    companion object {
+        const val TAG: String = "LoginActivity"
     }
 }

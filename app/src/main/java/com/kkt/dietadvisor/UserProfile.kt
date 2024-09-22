@@ -2,6 +2,7 @@ package com.kkt.dietadvisor
 
 import android.app.DatePickerDialog
 import android.content.Intent
+import android.media.session.MediaSession.Token
 import android.os.Bundle
 import android.text.InputType
 import android.util.Log
@@ -15,6 +16,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.kkt.dietadvisor.utility.AuthStateUtil
+import com.kkt.dietadvisor.utility.TokenStateUtil
+import com.kkt.dietadvisor.utility.UserInfoUtil
+import net.openid.appauth.AuthState
+import net.openid.appauth.AuthorizationService
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -29,7 +35,8 @@ import java.util.concurrent.TimeUnit
 
 class UserProfile : AppCompatActivity() {
 
-    private lateinit var accessToken: String
+    private lateinit var authState: AuthState
+    private lateinit var authService: AuthorizationService
 
     private val client: OkHttpClient by lazy {
         val logging = HttpLoggingInterceptor()
@@ -53,23 +60,26 @@ class UserProfile : AppCompatActivity() {
             insets
         }
 
-        // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
-        // Retrieve access token from the intent extras
-        accessToken = intent.getStringExtra("ACCESS_TOKEN")
-            ?: throw IllegalArgumentException("Access token is missing from the intent")
-        Log.d(TAG, "onCreate: Access Token Retrieved: $accessToken")
+        // Initialize AuthorizationService & AuthState
+        authService = AuthorizationService(this)
+        authState = AuthStateUtil.readAuthState(this)
 
-        // Fetch and display user information
-        getUserInfo(accessToken) { userExists, userInfo ->
-            if (userExists) {
-                userInfo?.let {
-                    runOnUiThread {
-                        Log.d(TAG, "onCreate: Loading UI with user info...")
-                        loadUserInfo(jsonString = userInfo)
+        TokenStateUtil.checkAndRenewAccessToken(this, authState, authService) { _ ->
+            val accessToken = authState.accessToken
+            accessToken?.let {
+                // Fetch and display user information
+                UserInfoUtil.getUserInfo(this, accessToken, client) { userExists, userInfo ->
+                    if (userExists) {
+                        userInfo?.let {
+                            runOnUiThread {
+                                Log.d(TAG, "onCreate: Loading UI with user info...")
+                                loadUserInfo(jsonString = userInfo)
+                            }
+                        }
+                    } else {
+                        Log.e(TAG, "getUserInfoCallback: Failure! User does not exist", )
                     }
                 }
-            } else {
-                Log.e(TAG, "getUserInfoCallback: Failure! User does not exist", )
             }
         }
 
@@ -80,21 +90,18 @@ class UserProfile : AppCompatActivity() {
 
         homeButton.setOnClickListener {
             val intent = Intent(this, HomePage::class.java)
-            intent.putExtra("ACCESS_TOKEN", accessToken) // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
         }
 
         recommendationsButton.setOnClickListener {
             val intent = Intent(this, Recommendations::class.java)
-            intent.putExtra("ACCESS_TOKEN", accessToken) // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
         }
 
         trackingButton.setOnClickListener {
             val intent = Intent(this, Tracking::class.java)
-            intent.putExtra("ACCESS_TOKEN", accessToken) // TODO: TEMPORARY SOLUTION! Find a way to refresh token instead of passing around to multiple intents
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
         }
@@ -102,6 +109,10 @@ class UserProfile : AppCompatActivity() {
         // Sign out button
         val signOutButton = findViewById<Button>(R.id.sign_out_button)
         signOutButton.setOnClickListener {
+            // Clear AuthState and erase tokens
+            TokenStateUtil.signOut(this)
+
+            // Redirect the user to the login screen and clear the back stack
             val intent = Intent(this, LoginActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             startActivity(intent)
@@ -168,39 +179,6 @@ class UserProfile : AppCompatActivity() {
                 findViewById<TextView>(R.id.language).text = newValue
             }
         }
-    }
-
-    private fun getUserInfo(acceVssToken: String, onResult: (Boolean, String?) -> Unit) {
-        val url = getString(R.string.DIET_ADVISOR_USER_ENDPOINT_URL)
-
-        val request = Request.Builder()
-            .url(url)
-            .addHeader("Authorization", "Bearer $accessToken")
-            .get() // GET request to retrieve user data
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                e.printStackTrace()
-                onResult(false, null)
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    // Handle the response
-                    val responseBody = response.body?.string()
-                    println(responseBody)
-                    // Here, you might want to parse the JSON response to a UserData object using Gson
-                    Log.d(TAG, "onResponse: Success! Retrieved user information!")
-                    onResult(true, responseBody)
-                } else {
-                    // Handle the error
-                    println("Request failed: ${response.message}")
-                    Log.d(TAG, "onResponse: Failure! No User to Retrieve!")
-                    onResult(false, null)
-                }
-            }
-        })
     }
 
     private fun loadUserInfo(jsonString: String) {
@@ -302,5 +280,9 @@ class UserProfile : AppCompatActivity() {
         builder.setNegativeButton(resources.getString(R.string.cancel)) { dialog, _ -> dialog.cancel() }
 
         builder.show()
+    }
+
+    companion object {
+        const val TAG = "UserProfile"
     }
 }
