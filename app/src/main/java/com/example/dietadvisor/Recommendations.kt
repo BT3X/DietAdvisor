@@ -28,9 +28,10 @@ class Recommendations : AppCompatActivity() {
         setContentView(R.layout.activity_recommendations)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            v.setPadding(systemBars.left, 30, systemBars.right, systemBars.bottom)
             insets
         }
+
         val recommendationRequest = findViewById<Button>(R.id.request_recommendations)
         val recommendationText = findViewById<TextView>(R.id.recommendations_text)
         val recommendationSV = findViewById<ScrollView>(R.id.recommendations_scroll_view)
