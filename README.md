@@ -1,61 +1,120 @@
-# Diet Advisor: An Image-Based Food Intake Analysis and Meal Recommendation System
+# **Diet Advisor: An Image-Based Food Intake Analysis and Meal Recommendation System**
 
-## Overview
-Diet Advisor is a mobile application designed to help users monitor and improve their dietary habits by analyzing food images. The system estimates the nutritional content of meals and provides personalized dietary recommendations based on the user's health goals. This project utilizes cutting-edge machine learning, computer vision, and deep learning technologies to identify food items, estimate nutritional values, and suggest meals.
+## **Overview**
 
-## Features
+Diet Advisor is an **Android application** designed to help users monitor and improve their dietary habits by analyzing food images. The app estimates the nutritional content of meals and provides personalized dietary recommendations based on users’ health goals. By leveraging advanced machine learning, computer vision, and deep learning techniques, Diet Advisor simplifies food intake tracking and meal planning, empowering users to make healthier choices.
+
+---
+
+## **Features**
+
 - **Food Recognition**: Detects and identifies food items from images using the YOLOv5 object detection model.
-- **Nutrient Estimation**: Estimates the nutritional content of meals, including calorie and macronutrient information, through advanced image segmentation and depth estimation techniques.
-- **Personalized Recommendations**: Suggests meals based on user input, such as dietary preferences and health goals.
-- **User-Friendly Interface**: Simplifies the process of tracking food intake and analyzing nutritional data with an easy-to-use interface.
+- **Nutrient Estimation**: Calculates calorie and macronutrient information through advanced image segmentation and depth estimation techniques.
+- **Personalized Recommendations**: Provides meal suggestions tailored to users' dietary preferences and health goals, powered by a large language model (GPT-4).
+- **User-Friendly Interface**: Designed with a responsive and intuitive layout to enhance the user experience, making dietary tracking easy and accessible.
 
-## System Architecture
-The system is divided into the following key modules:
-1. **Food Identification & Segmentation**: Uses YOLOv5 and the Segment Anything Model (SAM) to identify and isolate food items within images.
-2. **Depth Estimation**: Employs the Depth Anything Model to calculate the volume of food items based on RGB images.
-3. **Nutritional Content Estimation**: Calculates the mass and nutritional content of the food using Support Vector Regressor (SVR) models.
-4. **Meal Recommender System**: Provides personalized meal suggestions using a large language model based on the user's health and dietary preferences.
+---
 
-## Dataset
-The system uses a custom dataset for training and testing. The dataset includes:
-- Food images with a 10 NTD coin for scale.
-- Ground truth mass values for each food item.
-- Segmented food items to improve accuracy in analysis.
+## **System Architecture**
 
-## Technologies Used
+The system consists of the following key components:
+
+1. **Food Identification & Segmentation**:
+   - Detects food items using YOLOv5.
+   - Segments food items with the Segment Anything Model (SAM) for precise isolation.
+2. **Depth Estimation**:
+   - Uses the Depth Anything Model to determine the volume of food items from RGB images.
+3. **Nutritional Content Estimation**:
+   - Employs a Support Vector Regressor (SVR) to estimate food mass and calculates nutritional content.
+4. **Meal Recommender System**:
+   - Utilizes GPT-4 to provide personalized meal recommendations based on user profiles, dietary preferences, and health goals.
+
+---
+
+## **Dataset**
+
+The project uses a custom dataset for training and testing:
+
+- **Food Images**: Each image includes a 10 NTD coin for scale.
+- **Ground Truth Mass Values**: Accurate measurements of food mass for model training.
+- **Segmented Food Items**: Enhanced segmentation for better analysis and model accuracy.
+
+---
+
+## **Technologies Used**
+
 - **YOLOv5** for food identification.
 - **Segment Anything Model (SAM)** for food segmentation.
-- **Depth Anything Model** for depth estimation from RGB images.
-- **Flask** for backend services.
+- **Depth Anything Model** for depth estimation.
 - **Support Vector Regressor (SVR)** for mass estimation.
-- **GPT-4** (LLM) for generating personalized meal recommendations.
+- **GPT-4** for generating personalized meal recommendations.
+- **Android Studio and Kotlin** for mobile application development.
+- **Flask** for backend services.
 
-## Installation
-1. Clone the repository:
-    ```bash
-    # TODO...
-    ```
+---
 
-2. Install dependencies:
-    ```bash
-    # TODO...
-    ```
+## **Video Demo**
 
-3. Run the application:
-    ```bash
-    # TODO...
-    ```
+Watch Diet Advisor in action:
 
-## Usage
-1. Register an account and provide basic personal information (e.g., weight goals).
-2. Upload an image of your meal.
-3. View the estimated nutritional information.
-4. Track your food intake and receive personalized meal recommendations based on your dietary preferences.
+- **[YouTube Demo](https://youtu.be/qvs0chYFkQ8)**
 
-## Future Improvements
-- Expand the dataset to include a wider variety of food types.
-- Support multiple food containers beyond the single type of plate used.
-- Develop a dedicated smartphone application to streamline food image uploads.
+This demo provides an overview of the application’s interface, food recognition, nutritional estimation, and personalized recommendations.
 
-## License
+---
+
+## **Installation**
+
+1. **Clone the Repository**:
+
+   ```bash
+   git clone https://github.com/BT3X/DietAdvisor.git
+   ```
+
+2. **Install the Android Application**:
+   - Open the project in Android Studio.
+   - Build and deploy the app to an emulator or physical device.
+
+---
+
+## **Usage**
+
+1. **Register and Provide Information**:
+   - Create an account and enter basic personal details (e.g., age, weight, dietary goals).
+2. **Upload a Meal Image**:
+   - Take or upload a picture of your meal.
+3. **View Results**:
+   - See estimated nutritional information, including calorie and macronutrient breakdowns.
+4. **Get Recommendations**:
+   - Receive personalized meal suggestions tailored to your dietary preferences and goals.
+
+---
+
+## **Future Improvements**
+
+- **Dataset Expansion**:
+  - Include a broader range of food types and cuisines for enhanced recognition accuracy.
+- **Enhanced Container Support**:
+  - Add support for analyzing meals in multiple types of containers beyond plates.
+- **Dedicated Mobile Enhancements**:
+  - Expand functionality for seamless integration with smartphone cameras and user interfaces.
+
+---
+
+## **Acknowledgments**
+
+We would like to thank the following contributors and tools that made this project possible:
+
+- **YOLOv5** by Ultralytics for food detection and object identification.
+- **Segment Anything Model (SAM)** by Meta for precise food segmentation.
+- **Depth Anything Model** for advanced depth estimation from RGB images.
+- **GPT-4** by OpenAI for personalized meal recommendation generation.
+- **Android Studio and Kotlin** for mobile application development tools.
+- **Flask** for backend server implementation.
+- Team Members: Ken Chang, Kenrick Albert, Nguyen Minh Trang.
+
+---
+
+## **License**
+
 This project is licensed under the MIT License.
